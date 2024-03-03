@@ -1,4 +1,4 @@
-# Starter folder
+# Forecasting the U.S. Presidential Election Popular Vote
 
 ## Overview
 
