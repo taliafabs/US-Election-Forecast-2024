@@ -1,4 +1,4 @@
-# Forecasting the U.S. Presidential Election Popular Vote
+# Forecasting the 2024 U.S. Presidential Election
 
 ## Overview
 
