@@ -1,5 +1,6 @@
 #### Preamble ####
-# Purpose: Simulate the Survey Data Set
+# Purpose: Simulate a data set where the chance that a person's preferred 
+# presidential candidate is Joe Biden depends on ...
 # Author: Talia Fabregas, Fatimah Yunusa, Aamishi
 # Date: 5 March 2024
 # Contact: talia.fabregas@mail.utoronto.ca
