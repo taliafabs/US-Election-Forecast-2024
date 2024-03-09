@@ -14,15 +14,22 @@ library(tidyverse)
 library(janitor)
 library(dplyr)
 
+set.seed(853)
+num_obs <- 1000
 
-presidential_choices_2020 <- c("Donald Trump", 
-                               "Joe Biden", 
-                               "Howie Hawkins", 
-                               "Did not vote")
-party_affiliation <- c("Democrat", 
-                       "Republican")
-gender <- c("Male", "Female")
-marital_status <- c("single", "married", "divorced", "widowed")
+us_presidential_votes <- tibble(
+  education = sample(0:5, size=num_obser)
+  
+)
+# 
+# presidential_choices_2020 <- c("Donald Trump", 
+#                                "Joe Biden", 
+#                                "Howie Hawkins", 
+#                                "Did not vote")
+# party_affiliation <- c("Democrat", 
+#                        "Republican")
+# gender <- c("Male", "Female")
+# marital_status <- c("single", "married", "divorced", "widowed")
 
 
 #### Simulate data ####
