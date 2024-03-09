@@ -50,7 +50,7 @@ names_matcher <- tibble(stateicp = state.name, inputstate = state.abb)
 # Filter out people who:
 #   - 1. have no party affiliation or leaning  
 #   - 2. did not vote for Trump or Biden in 2020
-# it is not practical to decipher their 2024 vote choice.
+# it is not practical to decipher their 2024 vote choice from this survey data set.
 
 reduced_survey_data2 <- reduced_survey_data1 |>
   filter(presvote20post == "Joe Biden" | 
