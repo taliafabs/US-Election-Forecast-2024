@@ -1,6 +1,11 @@
 # Forecasting the 2024 U.S. Presidential Election
 
-## Overview
+## Project Overview
+
+This repo contains the code and data used to forecast the 2024 U.S. Presidential Election. It was created by Talia Fabregas, Fatimah Yunusa, and Aamishi Sundeep. Its purpose is to put together a paper that discusses the results of the logistic regression model that we built to ... The data that we used cannot be shared publicly, but we outline how we obtained it below.
+
+- The Survey Data is from ...
+- American Communities Survey (ACS) 2022 Data from IPUMS USA
 
 This repo provides students with a foundation for their own projects associated with *Telling Stories with Data*. You do not need every aspect for every paper and you should delete aspects that you do not need.
 
