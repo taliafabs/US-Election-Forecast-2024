@@ -2,20 +2,23 @@
 # Purpose: Simulate a data set where the chance that a person's preferred 
 # presidential candidate is Joe Biden depends on age, gender, race, education,
 # income, state, and whether they live in an urban area.
-# Author: Talia Fabregas, Fatimah Yunusa, Aamishi
+# Author: Talia Fabregas, Fatimah Yunusa, Aamishi Sandeep
 # Date: 5 March 2024
 # Contact: talia.fabregas@mail.utoronto.ca
 # License: MIT
-# Pre-requisites: 
-# Any other information needed?
+# Pre-requisites: None
 
 
 #### Workspace setup ####
+# install.packages("arrow")
 library(tidyverse)
 library(janitor)
 library(arrow)
 
+# set seed for reproducibility
 set.seed(853)
+
+# set the number of observations to 1000
 num_obs <- 1000
 
 us_states <- c(
