@@ -1,5 +1,5 @@
 #### Preamble ####
-# Purpose: Simulate a data set where the chance that a person's preferred 
+# Purpose: Prepare and clean the post-stratification data downloaded from IPUMS
 # presidential candidate is Joe Biden depends on ...write variables here!
 # Author: Talia Fabregas, Fatimah Yunusa, Aamishi Sundeep
 # Date: 5 March 2024
@@ -15,6 +15,7 @@
 library(tidyverse)
 library(janitor)
 library(haven)
+library(arrow)
 
 # Read in the raw post stratification data
 raw_poststrat_data <- read_dta("data/raw_data/usa_00001.dta")
@@ -153,5 +154,7 @@ poststrat_analysis_data <- reduced_poststrat_data2 |>
          stateicp, urban)
 
 # write post-stratification analysis data into data/analysis_data folder 
+# add it to the gitignore
+write_parquet(poststrat_analysis_data, "data/analysis_data/poststrat_analysis_data.parquet")
 
 

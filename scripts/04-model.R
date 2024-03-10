@@ -1,22 +1,46 @@
 #### Preamble ####
 # Purpose: Using logistic regression to estimate a model where binary support for 
-# President Joe Biden versus GOP nominee Donald Trump is explained by sex, age bracket
-# race, state, and region
-# Author: Talia Fabregas, Fatimah Yunusa, Aamishi
+# President Joe Biden versus GOP nominee Donald Trump is explained by age, gender, race
+# education, marital status, employment, income, state, and urban
+# Author: Talia Fabregas, Fatimah Yunusa, Aamishi Sundeep
 # Date: 8 March 2024
 # Contact: talia.fabregas@mail.utoronto.ca
 # License: MIT
-# Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
+# Pre-requisites: Run 01-data_cleaning-survey.R
+# Any other information needed? 
 
 
 #### Workspace setup ####
 library(tidyverse)
 library(rstanarm)
+library(arrow)
 
-#### Read Data
+#### Read Data ####
+survey_analysis_data <- read_parquet("data/analysis_data/survey_analysis_data.parquet")
+
+set.seed(853)
 
 ### Model Data ###
+
+model1 <- 
+  glm(
+    formula = vote_biden ~ age + sex + races + education_level + faminc_new + inputstate + urban,
+    data = survey_analysis_data,
+    family = binomial(link = "logit")
+    # prior = normal(location = 0, scale = 2.5, autoscale=TRUE),
+    # prior_intercept = normal(location=0, scale=2.5, autoscale=TRUE),
+    # seed = 853
+  )
+
+model2 <- 
+  stan_glm(
+    formula = vote_biden ~ age + sex + races,
+    data = survey_analysis_data,
+    family = binomial(link = "logit"),
+    prior = normal(location = 0, scale = 2.5, autoscale=TRUE),
+    prior_intercept = normal(location=0, scale=2.5, autoscale=TRUE),
+    seed = 853
+  )
 
 #### Save Model ####
 
@@ -24,16 +48,7 @@ library(rstanarm)
 # analysis_data <- read_csv("data/analysis_data/analysis_data.csv")
 # 
 # ### Model data ####
-# first_model <-
-#   stan_glm(
-#     formula = flying_time ~ length + width,
-#     data = analysis_data,
-#     family = gaussian(),
-#     prior = normal(location = 0, scale = 2.5, autoscale = TRUE),
-#     prior_intercept = normal(location = 0, scale = 2.5, autoscale = TRUE),
-#     prior_aux = exponential(rate = 1, autoscale = TRUE),
-#     seed = 853
-#   )
+
 # 
 # 
 # #### Save model ####

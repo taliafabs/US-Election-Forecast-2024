@@ -1,5 +1,5 @@
 #### Preamble ####
-# Purpose: Prepare and clean the survey data downloaded from ...
+# Purpose: Prepare and clean the survey data downloaded from Polarization Research Lab
 # Author: Talia Fabregas, Fatimah Yunusa, Aamishi
 # Date: 5 March 2024
 # Contact: talia.fabregas@mail.utoronto.ca
@@ -93,8 +93,8 @@ reduced_survey_data2 <- reduced_survey_data2 |>
 
 
 survey_analysis_data <- reduced_survey_data2 |>
-  select(vote_biden, ideo5, birthyr, age, age_bracket, sex, races, race_white,
-         race_asian, race_black, race_hispanic, race_native, educ, faminc_new,
+  select(vote_biden, pid7, presvote16post, presvote20post, ideo5, birthyr, age, age_bracket, sex, races, race_white,
+         race_asian, race_black, race_hispanic, race_native, marstat, educ, faminc_new,
          inputstate, urban)
 
 # rename educ to education_level to make format match with poststratification data
@@ -108,6 +108,9 @@ survey_analysis_data$inputstate <- as.factor(survey_analysis_data$inputstate)
 survey_analysis_data$education_level <- as.factor(survey_analysis_data$education_level)
 survey_analysis_data$faminc_new <- as.factor(survey_analysis_data$faminc_new)
 
-# save survey analysis data as a parquet
+
+# save survey analysis data as a parquet under data/analysis_data
+# add it to the gitignore
+write_parquet(survey_analysis_data, "data/analysis_data/survey_analysis_data.parquet")
 
 
