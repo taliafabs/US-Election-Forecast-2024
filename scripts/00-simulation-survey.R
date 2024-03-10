@@ -40,12 +40,12 @@ races <- c("white","black", "asian", "middle eastern", "native american",
 
 genders_binary <- c("male", "female")
 
-highest_education_level <- c("No high school",
-                             "High school",
-                             "2-year Diploma",
-                             "Bachelor's Degree",
-                             "Post-grad",
-                             "Doctorate")
+highest_education_level <- c("No HS",
+                             "High school graduate",
+                             "Some college",
+                             "2-year",
+                             "4-year",
+                             "Post-grad")
 
 income_brackets <- c("Less than $10000",
                      "$10000 - $19999",
@@ -79,7 +79,7 @@ simulated_survey_data <- tibble(
   # race
   race = sample(races, size = num_obs, replace = TRUE),
   # highest level of education
-  education = sample(highest_education_level, size=num_obs, replace=TRUE),
+  education_level = sample(highest_education_level, size=num_obs, replace=TRUE),
   # income
   income = sample(income_brackets, size=num_obs, replace=TRUE),
   # state
@@ -88,13 +88,16 @@ simulated_survey_data <- tibble(
   urban = sample(1:0, size=num_obs, replace=TRUE)
 )
 
+simulated_survey_data$race <- as.factor(simulated_survey_data$race)
+simulated_survey_data$education_level <- as.factor(simulated_survey_data$education_level)
+
 #### Save data ####
 
-# save as a parquet
+# save as a parquet under data/simulated_data
 write_parquet(simulated_survey_data, 
               "data/simulated_data/simulated_survey_data.parquet")
 
-# save as a csv
+# save as a csv under data/simulated_data
 write_csv(simulated_survey_data,
           "data/simulated_data/simulated_survey_data.csv")
 
