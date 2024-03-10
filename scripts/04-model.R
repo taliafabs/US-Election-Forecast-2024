@@ -33,13 +33,13 @@ model1 <-
   )
 
 model2 <- 
-  stan_glm(
+  glm(
     formula = vote_biden ~ age + sex + races,
-    data = survey_analysis_data,
-    family = binomial(link = "logit"),
-    prior = normal(location = 0, scale = 2.5, autoscale=TRUE),
-    prior_intercept = normal(location=0, scale=2.5, autoscale=TRUE),
-    seed = 853
+    data = survey_analysis_data
+    # family = binomial(link = "logit"),
+    # prior = normal(location = 0, scale = 2.5, autoscale=TRUE),
+    # prior_intercept = normal(location=0, scale=2.5, autoscale=TRUE),
+    # seed = 853
   )
 
 #### Save Model ####
