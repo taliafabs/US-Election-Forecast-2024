@@ -49,4 +49,5 @@ vignettes/*.pdf
 .data
 .usa_00001.dta
 .2024_week3_Jan-12--Jan-19.csv
+.poststrat_analysis_data.parquet
 
