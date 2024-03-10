@@ -7,13 +7,14 @@
 # Pre-requisites: 
 # - Download the America's Pulse Survey Data Week 3 Jan 12-19
 # 2024 from Polarization Research Lab and save it to data/raw_data
-# - Add the file to the gitignore
+# - Add it to the gitignore
 # Any other information needed?
 
 #### Workplace Setup ####
 library(tidyverse)
 library(janitor)
 library(haven)
+library(arrow)
 
 # Read in the raw data
 raw_survey_data <- read_csv("data/raw_data/2024_week3_Jan-12--Jan-19.csv")
@@ -59,7 +60,7 @@ reduced_survey_data2 <- reduced_survey_data1 |>
 
 reduced_survey_data2 <- reduced_survey_data2 |>
   mutate(
-    age_groups = case_when(age < 25 ~ "18-24",
+    age_bracket = case_when(age < 25 ~ "18-24",
                            age < 35 ~ "25-34",
                            age < 50 ~ "36-49",
                            age < 65 ~ "50-64",
@@ -71,21 +72,42 @@ reduced_survey_data2 <- reduced_survey_data2 |>
                            pid7 == "Strong Democrat"), 
                         1, 
                         0),
-    sex = ifelse(gender == "Female", 1, 0),
+    sex = ifelse(gender == "Female", "female", "male"),
+    # create a races variable and do the same for the post stratification data
+    races = case_when(race=="White" ~ "white",
+                      race=="Black" ~ "black",
+                      race=="Hispanic" ~ "hispanic",
+                      race=="Native American" ~ "native american",
+                      (race == "Middle Eastern" | race == "Other") ~ "other",
+                      race == "Two or more races" ~ "mixed"
+    ),
     # indicator variables for race
     race_white = ifelse(race == "White", 1, 0),
     race_asian = ifelse(race == "Asian", 1, 0),
     race_black = ifelse(race == "Black", 1, 0),
     race_hispanic = ifelse(race == "Hispanic", 1, 0),
     race_native = ifelse(race == "Native American", 1, 0),
-    race_mideast = ifelse(race == "Middle Eastern", 1, 0),
-    urban = ifelse((urbanicity2 == "Big city"| urbanicity == "Smaller city"), 1, 0)
+    # indicator variable for whether they live in an urban or rural area
+    urban = ifelse((urbanicity2 == "Big city"| urbanicity2 == "Smaller city"), 1, 0),
   )
 
-# do something with the education level here
-# reduced_survey_data2 |> 
-#   mutate(
-#     education_level = casewhen(
-#       
-#     )
-#   )
+
+survey_analysis_data <- reduced_survey_data2 |>
+  select(vote_biden, ideo5, birthyr, age, age_bracket, sex, races, race_white,
+         race_asian, race_black, race_hispanic, race_native, educ, faminc_new,
+         inputstate, urban)
+
+# rename educ to education_level to make format match with poststratification data
+survey_analysis_data <- survey_analysis_data|>
+  rename(education_level = educ)
+
+# make these categorical and match the post stratification formats
+survey_analysis_data$sex <- as.factor(survey_analysis_data$sex)
+survey_analysis_data$races <- as.factor(survey_analysis_data$races)
+survey_analysis_data$inputstate <- as.factor(survey_analysis_data$inputstate)
+survey_analysis_data$education_level <- as.factor(survey_analysis_data$education_level)
+survey_analysis_data$faminc_new <- as.factor(survey_analysis_data$faminc_new)
+
+# save survey analysis data as a parquet
+
+
