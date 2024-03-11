@@ -43,6 +43,8 @@ reduced_poststrat_data1 <- raw_poststrat_data |>
     metro
   )
 
+names_matcher <- tibble(stateicp = state.name, inputstate = state.abb)
+
 # Make age numeric so that it is easier to group it into age brackets
 reduced_poststrat_data1$age <- as.numeric(reduced_poststrat_data1$age)
 
@@ -55,11 +57,22 @@ reduced_poststrat_data1$ftotinc <- as.numeric(reduced_poststrat_data1$ftotinc)
 # filter out income of 9999999 because this indicates NA
 reduced_poststrat_data2 <- reduced_poststrat_data1 |>
   filter(race != "two major races", 
-         race != "three or more major races", 
-         age >= 18) |>
-  filter(!(is.na(age))) |>
-  filter(ftotinc != 9999999) |>
+         race != "three or more major races")
+
+reduced_poststrat_data2 <- reduced_poststrat_data2 |>
+  filter(!is.na(age))
+
+reduced_poststrat_data2 <- reduced_poststrat_data2 |>
+  filter(age >= 18)
+
+reduced_poststrat_data2 <- reduced_poststrat_data2 |>
+  filter(ftotinc != 9999999)
+
+reduced_poststrat_data2 <- reduced_poststrat_data2 |>
   filter(!is.na(educ))
+
+reduced_poststrat_data2 <- reduced_poststrat_data2 |> 
+  filter(stateicp != "state not identified")
 
 reduced_poststrat_data2 <- reduced_poststrat_data2 |>
   mutate(
@@ -87,7 +100,7 @@ reduced_poststrat_data2 <- reduced_poststrat_data2 |>
     urban = ifelse((metro == "in metropolitan area: in central/principal city"|
                       metro == "in metropolitan area: not in central/principal city" |
                       metro == "in metropolitan area: central/principal city status indeterminable (mixed)"),
-                   1, 0)
+                   "urban", "rural")
   )
     
 reduced_poststrat_data2 <- reduced_poststrat_data2 %>%
@@ -126,12 +139,10 @@ reduced_poststrat_data2 <- reduced_poststrat_data2 %>%
                                     ftotinc >= 500000 ~ "$500000 or more")
     ) %>%
   mutate(
-    age_bracket = case_when(age < 25 ~ "18-24",
-                            age < 35 ~ "25-34",
-                            age < 50 ~ "36-49",
-                            age < 65 ~ "50-64",
-                            age < 80 ~ "65-79",
-                            age >= 80 ~ "80+")
+    age_bracket = case_when(age < 30 ~ "18-29",
+                            age < 45 ~ "30-44",
+                            age < 60 ~ "45-59",
+                            age >= 60 ~ "60+")
   ) %>%
   mutate(
     urban = ifelse((metro == "in metropolitan area: in central/principal city"| 
@@ -152,6 +163,10 @@ poststrat_analysis_data <- reduced_poststrat_data2 |>
   select(birthyr, age, age_bracket, sex, races, race_white,
          race_asian, race_black, race_hispanic, race_native, educ, faminc_new,
          stateicp, urban)
+
+# rename stateicp to state to match survey data
+poststrat_analysis_data <- poststrat_analysis_data |>
+  rename(state = stateicp)
 
 # write post-stratification analysis data into data/analysis_data folder 
 # add it to the gitignore

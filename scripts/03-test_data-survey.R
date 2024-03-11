@@ -11,6 +11,8 @@
 
 #### Workspace setup ####
 library(tidyverse)
-# [...UPDATE THIS...]
 
 #### Test data ####
+
+# Test the categorical variables
+# Test that every respondent is 18 years of age or older

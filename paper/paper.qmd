@@ -4,7 +4,7 @@ subtitle: "My subtitle if needed"
 author: 
   - Talia Fabregas
   - Fatimah Yunusa
-  - Aamishi Sundeep
+  - Aamishi Sundeep Avarsekar
 thanks: "Code and data are available at: https://github.com/taliafabs/US-Election-Forecast-2024.git"
 date: today
 date-format: long
@@ -24,15 +24,15 @@ library(janitor)
 library(rstanarm)
 library(readr)
 library(ggplot2)
+library(knitr)
+library(arrow)
 ```
 
 # Introduction
 
 The 2024 U.S. Presidential Election will take place on Tuesday November 5 2024. Incumbent President Joseph R. Biden Jr. will seek a second term. Former President Donald J. Trump GOP nominee.
 
-Delegates to secure the nomination, Nikki Haley has dropped out of GOP
-
-You can and should cross-reference sections and sub-sections. We use @citeR and @rohan.
+Delegates to secure the nomination, Nikki Haley has dropped out of GOPYou can and should cross-reference sections and sub-sections. We use @citeR and
 
 The remainder of this paper is structured as follows. @sec-data discusses the survey and post-stratification data used.
 
@@ -56,15 +56,88 @@ Previous groups have looked at ...
 
 # Data {#sec-data}
 
-Our data is from ...
+```{r}
+library(arrow)
+library(dplyr)
+survey_analysis_data <- arrow::read_parquet("/Users/talia/US-Election-Forecast/data/analysis_data/survey_analysis_data.parquet")
+# poststrat_analysis_data <- read_parquet("/Users/talia/US-Election-Forecast/data/analysis_data/poststrat_analysis_data.parquet")
+print(survey_analysis_data)
+
+proportion_biden <- survey_analysis_data %>%
+  filter(vote_biden == 1) %>%
+  summarise(proportion = n() / nrow(survey_analysis_data))
+
+proportion_biden_by_state <- survey_analysis_data %>%
+  group_by(state) %>%
+  summarise(proportion_biden = mean(vote_biden == 1, na.rm = TRUE))
+
+proportion_by_state <- survey_analysis_data %>%
+  group_by(state) %>%
+  summarise(proportion = n() / nrow(survey_analysis_data))
+
+proportion_biden_by_state
+proportion_by_state
+
+# only includes 7 observations from hawaii
+# Hawaii is historically a Democratic stronghold
+```
+
+```{r}
+#| label: fig-survey_presidential_preferences
+#| fig-cap: The Distribution of Presidential Preferences, by gender and highest level of education
+#| echo: false
+survey_analysis_data |>
+  ggplot(aes(x = education_level, fill = vote24)) +
+  stat_count(position = "dodge") +
+  facet_wrap(facets = vars(sex)) +
+  theme_minimal() +
+  labs(
+    x = "Highest education",
+    y = "Number of respondents",
+    fill = "Preferred Presidential Candidate"
+  ) +
+  coord_flip() +
+  scale_fill_brewer(palette = "Set1") +
+  theme(legend.position = "bottom")
+```
+
+```{r}
+#| label: fig-survey_presidential_preferences1
+#| fig-cap: The Distribution of Presidential Preferences, by gender and race
+#| echo: false
+
+survey_analysis_data |>
+  ggplot(aes(x = races, fill = vote24)) +
+  stat_count(position = "dodge") +
+  facet_wrap(facets = vars(sex)) +
+  theme_minimal() +
+  labs(
+    x = "Race",
+    y = "Number of respondents",
+    fill = "Preferred Presidential Candidate"
+  ) +
+  coord_flip() +
+  scale_fill_brewer(palette = "Set1") +
+  theme(legend.position = "bottom")
+```
 
 ## Survey Data {#sec-survey}
 
 Survey data is from @americaspoliticalpulse This section should talk about the survey data set
 
-### Survey Data figures and tables go here 
+### Survey Data figures and tables go here
+
+```{r}
+#| echo: false
+#| eval: true
+#| warning: false
+#| message: false
+
+```
 
 ## Post Stratification Data {#sec-poststrat}
+
+@citeIPUMS
 
 ```{r}
 #| label: fig-temp1
@@ -110,17 +183,19 @@ Here we briefly describe the Bayesian analysis model used to investigate... Back
 
 Define $y_i$ as the number of seconds that the plane remained aloft. Then $\beta_i$ is the wing width and $\gamma_i$ is the wing length, both measured in millimeters.
 
+The logistic regression used to predict ... is as follows:
+
 ```{=tex}
-\begin{align} 
-y_i|\mu_i, \sigma &\sim \mbox{Normal}(\mu_i, \sigma) \\
-\mu_i &= \alpha + \beta_i + \gamma_i\\
-\alpha &\sim \mbox{Normal}(0, 2.5) \\
-\beta &\sim \mbox{Normal}(0, 2.5) \\
-\gamma &\sim \mbox{Normal}(0, 2.5) \\
-\sigma &\sim \mbox{Exponential}(1)
+\begin{align}
+y_i &= \beta_0 + \beta_1 \times x_{sex} + \beta_2 \times x_{age\_bracket} + \beta_3 \times x_{races} + \beta_3 \times x_{education\_level} + \beta_4 \times x_{state} + \beta_5 
+\times x_{urban} + \beta_5 \times x_{race\_black}
 \end{align}
 ```
-We run the model in R [@citeR] using the `rstanarm` package of @rstanarm. We use the default priors from `rstanarm`.
+We run our model in R [@citeR] using the `rstanarm` package of @rstanarm. We use the default priors from `rstanarm`.
+
+We use the `predict()` function in R @citeR to apply our logistic regression model to the ACS Census data @citeIPUMS.
+
+Model weaknesses: logistic regression output is binary so it does not include the options of not voting or voting for a third-party candidate.
 
 ### Model justification
 
@@ -140,35 +215,35 @@ Our results are summarized in @tbl-modelresults.
 
 library(rstanarm)
 
-# first_model <-
-#   readRDS(file = here::here("models/first_model.rds"))
+presidential_vote_model <-
+  readRDS(file = here::here("models/presidential_vote_model.rds"))
 ```
 
 ```{r}
 #| echo: false
 #| eval: true
 #| label: tbl-modelresults
-#| tbl-cap: "Explanatory models of flight time based on wing width and wing length"
+#| tbl-cap: "Explanatory models of presidential vote based on ..."
 #| warning: false
 
-# modelsummary::modelsummary(
-#   list(
-#     "First model" = first_model
-#   ),
-#   statistic = "mad",
-#   fmt = 2
-# )
+modelsummary::modelsummary(
+  list(
+    "Presidential Vote Model" = presidential_vote_model
+  ),
+  statistic = "mad",
+  fmt = 2
+)
 ```
 
 # Discussion
 
-## First discussion point {#sec-first-point}
+## Popular Vote Projection {#sec-first-point}
 
 If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this.
 
-## Second discussion point
+## Electoral College Projection
 
-## Third discussion point
+## Polarization and America's Urban-Rural Divide
 
 ## Weaknesses and next steps
 
@@ -184,7 +259,7 @@ Weaknesses and next steps should also be included.
 
 # Model details {#sec-model-details}
 
-## Posterior predictive check
+## Correlation Map
 
 In @fig-ppcheckandposteriorvsprior-1 we implement a posterior predictive check. This shows...
 
@@ -209,6 +284,20 @@ In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior. Th
 #   scale_color_brewer(palette = "Set1") +
 #   theme(legend.position = "bottom") +
 #   coord_flip()
+```
+
+Model plot (still need to fix this)
+
+```{r}
+#| echo: false
+#| eval: true
+#| label: tbl-modelplot1
+#| tbl-cap: "Model Plot"
+#| warning: false
+
+# modelplot(presidential_vote_model, conf_level = 0.9) +
+#   labs(x = "90 per cent credibility interval")
+
 ```
 
 ## Diagnostics
