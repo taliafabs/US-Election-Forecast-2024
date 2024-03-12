@@ -52,3 +52,6 @@ vignettes/*.pdf
 .survey_analysis_data.parquet
 .poststrat_analysis_data.parquet
 
+# model diagnostics
+.04-model-diagnostics.R
+
