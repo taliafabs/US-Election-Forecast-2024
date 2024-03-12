@@ -80,6 +80,7 @@ proportion_by_state
 
 # only includes 7 observations from hawaii
 # Hawaii is historically a Democratic stronghold
+# only 4 samples from kansas
 ```
 
 ```{r}
@@ -101,6 +102,12 @@ survey_analysis_data |>
   theme(legend.position = "bottom")
 ```
 
+## Survey Data {#sec-survey}
+
+Survey data is from @americaspoliticalpulse This section should talk about the survey data set
+
+### Survey Data figures and tables go here
+
 ```{r}
 #| label: fig-survey_presidential_preferences1
 #| fig-cap: The Distribution of Presidential Preferences, by gender and race
@@ -121,18 +128,34 @@ survey_analysis_data |>
   theme(legend.position = "bottom")
 ```
 
-## Survey Data {#sec-survey}
-
-Survey data is from @americaspoliticalpulse This section should talk about the survey data set
-
-### Survey Data figures and tables go here
-
 ```{r}
+#| label: fig-electoral-map-survey
+#| fig-cap: Electoral map based solely on the survey data
 #| echo: false
-#| eval: true
-#| warning: false
-#| message: false
+library(ggplot2)
+library(statebins)
+survey_electoral_map <- survey_analysis_data %>% 
+  group_by(state, vote_biden) %>% 
+  summarise(n = n()) %>% 
+  group_by(state) %>% 
+  mutate(prop = n/sum(n)) %>% 
+  filter(vote_biden == 1)
 
+survey_electoral_map %>%
+  mutate(statename = str_to_title(state)) %>%
+  ggplot(aes(fill = prop, state = statename)) +
+  geom_statebins() +
+  scale_fill_gradient2(low = "#d12531", high = "#244999",
+                       mid = "white", midpoint = mean(survey_electoral_map$prop)) +
+  theme_classic() +
+  theme(axis.line = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank()) +
+  labs(fill = "Proportion Voting \nfor Biden",
+       title = "Map of the US States that plan to support Joe Biden or Donald Trump")
+
+# note extremely small sample sizes from Hawaii, Kansas, and Wyoming
+# note that survey sample size was only 1000
 ```
 
 ## Post Stratification Data {#sec-poststrat}
@@ -147,8 +170,6 @@ Survey data is from @americaspoliticalpulse This section should talk about the s
 ```
 
 Talk more about it.
-
-And also planes (@fig-planes). (You can change the height and width, but don't worry about doing that until you have finished every other aspect of the paper - Quarto will try to make it look nice and the defaults usually work well once you have enough text.)
 
 ```{r}
 #| label: fig-temp2

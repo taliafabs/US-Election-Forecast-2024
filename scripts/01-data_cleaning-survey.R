@@ -64,14 +64,12 @@ reduced_survey_data2 <- reduced_survey_data2 |>
                             age < 45 ~ "30-44",
                             age < 60 ~ "45-59",
                             age >= 60 ~ "60+"),
-    vote_biden = ifelse(((presvote20post == "Joe Biden" | 
-                           pid7 == "Not very strong Democrat" |
+    vote_biden = ifelse(((pid7 == "Not very strong Democrat" |
                            pid7 == "Lean Democrat" |
                            pid7 == "Strong Democrat") & presvote16post != "Donald Trump" & presvote20post != "Donald Trump"), 
                         1, 
                         0),
-    vote24 = ifelse(((presvote20post == "Joe Biden" | 
-                        pid7 == "Not very strong Democrat" |
+    vote24 = ifelse(((pid7 == "Not very strong Democrat" |
                         pid7 == "Lean Democrat" |
                         pid7 == "Strong Democrat") & presvote16post != "Donald Trump" & presvote20post != "Donald Trump"), 
                     "Joe Biden", 
@@ -121,5 +119,3 @@ survey_analysis_data$faminc_new <- as.factor(survey_analysis_data$faminc_new)
 # save survey analysis data as a parquet under data/analysis_data
 # add it to the gitignore
 write_parquet(survey_analysis_data, "data/analysis_data/survey_analysis_data.parquet")
-
-
