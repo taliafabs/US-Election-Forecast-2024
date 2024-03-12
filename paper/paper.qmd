@@ -34,6 +34,8 @@ The 2024 U.S. Presidential Election will take place on Tuesday November 5 2024. 
 
 Delegates to secure the nomination, Nikki Haley has dropped out of GOPYou can and should cross-reference sections and sub-sections. We use @citeR and
 
+Packages used for data cleaning, model, visualizations, and tables: `tidyverse` @citetidyverse, `janitor` @citejanitor, `rstanarm`, `readr`, `ggplot2`, `knitr`, and `arrow`.
+
 The remainder of this paper is structured as follows. @sec-data discusses the survey and post-stratification data used.
 
 Clear gap that needs to be filled ... what is the research gap and why is this important?
@@ -57,6 +59,10 @@ Previous groups have looked at ...
 # Data {#sec-data}
 
 ```{r}
+#| include: false
+#| warning: false
+#| message: false
+
 library(arrow)
 library(dplyr)
 survey_analysis_data <- arrow::read_parquet("/Users/talia/US-Election-Forecast/data/analysis_data/survey_analysis_data.parquet")
@@ -86,7 +92,6 @@ proportion_by_state
 ```{r}
 #| echo: false
 #| warning: false
-#| message: false
 #| label: fig-survey_presidential_preferences
 #| fig-cap: The Distribution of Presidential Preferences, by gender and highest level of education
 survey_analysis_data |>
@@ -104,7 +109,11 @@ survey_analysis_data |>
   theme(legend.position = "bottom")
 ```
 
-## Survey Data {#sec-survey}
+```{r}
+
+```
+
+## Individual-Level Survey Data {#sec-survey}
 
 Our survey data is from the America's Political Pulse Survey conducted by the Polarization Research Lab. The Polarization Research Lab is a research group founded by top political science research scholars at Dartmouth College, Stanford University, and the University of Pennsylvania, dedicated to applying scientific research methods to the study of democracy and political polarization @americaspoliticalpulse. The Polarization Research Lab studies political polarization across the United States by conducting the Political Pulse Survey each week and making the results available to anyone, in real time, via their website. The America's Political Pulse Survey interviews 1000 American adults each week and asks them questions that aim to track affective polarization, support for violations of democratic norms, and support for the use of political violence in America @americaspoliticalpulse. The Polarization Research Lab makes high-level results of their survey easily accessible and visible via their website's dashboard.
 
@@ -121,9 +130,11 @@ In order to gain a better understanding of our survey data, we conducted explora
 Within our survey data, the vote distribution between Trump and Biden varies by sex and race. As seen in @fig-survey_presidential_preferences1, Black females were more likely to vote for President Joe Biden (D-Delaware) than former President Donald Trump (R-Florida) in 2020, whereas white males were more likely to vote for former President Trump. This indicates that race might be a predictor of who an individual's preferred presidential candidate is.
 
 ```{r}
+#| echo: false
+#| warning: false
+#| message: false
 #| label: fig-survey_presidential_preferences1
 #| fig-cap: The Distribution of Presidential Preferences, by gender and race
-#| echo: false
 
 survey_analysis_data |>
   ggplot(aes(x = races, fill = vote24)) +
@@ -141,9 +152,45 @@ survey_analysis_data |>
 ```
 
 ```{r}
+# write about America's urban-rural divide
+#| echo: false
+#| warning: false
+#| label: fig-survey_urban_rural
+#| fig-cap: The Distribution of Presidential Preferences of Respondents Living in Urban vs Rural Areas
+survey_analysis_data |>
+  ggplot(aes(x = urban, fill = vote24)) +
+  stat_count(position = "dodge") +
+  # facet_wrap(facets = vars(sex)) +
+  theme_minimal() +
+  labs(
+    y = "Number of respondents",
+    fill = "Preferred Presidential Candidate"
+  ) +
+  scale_fill_brewer(palette = "Set1") +
+  theme(legend.position = "bottom")
+
+# do a table of the proportion of respondents for trump vs biden in each state
+# overall is like 51% biden
+```
+
+```{r}
+#| echo: false
+#| warning: false
+#| label: tbl-survey_presidential_preferences_table
+#| fig-cap: Who Voters Plan to Support (Survey Data)
+
+num_respondents <- nrow(survey_analysis_data)
+num_biden <- sum(survey_analysis_data$vote_biden)
+num_trump <- num_respondents - num_biden
+
+```
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
 #| label: fig-electoral-map-survey
 #| fig-cap: Electoral map based solely on the survey data
-#| echo: false
 library(ggplot2)
 library(statebins)
 survey_electoral_map <- survey_analysis_data %>% 
@@ -170,9 +217,11 @@ survey_electoral_map %>%
 # note that survey sample size was only 1000
 ```
 
+@fig-electoral-map-survey illustrates the proportion of voters in each U.S. state who plan to support President Biden in the 2024 Presidential Election. We can see that there is strong support for President Biden in Washington, Oregon, New York, New Jersey, Maryland, Massachusetts, and Connecticut. We also see that Oklahoma, Idaho, and Utah heavily favor former President Trump. These results are expected and there were similar margins in the 2020 election. These states have also been Dem and GOP strongholds since 1992 (or whatever year). However, this electoral map also highlights some of the limitations fo teh survey data. Wyoming and Kansas are very blue in the electoral map based solely on the survey data, however that is very far from recent election results in those states. In fact, Wyoming was the most Pro-Trump state in both the 2016 and 2020 presidential elections, with Trump receiving 2016% and 2020% of the vote in each of those elections, respectively. The survey data set includes very few examples from small states.
+
 ## Post Stratification Data {#sec-poststrat}
 
-@citeIPUMS
+The post-stratification data used is comes from the American Community Survey (ACS) 2022 provided by IPUMS ( @citeIPUMS ).
 
 ```{r}
 #| label: fig-temp1
@@ -210,7 +259,7 @@ binary
 
 predicts support for trump or biden
 
-Here we briefly describe the Bayesian analysis model used to investigate... Background details and diagnostics are included in [Appendix -@sec-model-details].
+<!-- # Here we briefly describe the Bayesian analysis model used to investigate... Background details and diagnostics are included in [Appendix -@sec-model-details]. -->
 
 ```{r survey_model, echo=F, message=F, fig.cap="Results of Regression Model"}
 library(rstanarm)
@@ -229,23 +278,17 @@ library(dplyr)
 #          .by = stateicp)
 # 
 # poststrat_data_cells
-
-
-
-
 ```
 
 ## Model set-up
 
-Define $y_i$ as the number of seconds that the plane remained aloft. Then $\beta_i$ is the wing width and $\gamma_i$ is the wing length, both measured in millimeters.
-
-The logistic regression used to predict ... is as follows:
+Define $y_i$ whether an individual's preferred 2024 presidential candidate is Joe Biden (1) or Donald Trump (0). The logistic regression model used to predict support for Biden using sex, age, race, highest level of education, state, and whether the individual lives in an urban or rural area is as follows:
 
 ```{=tex}
 \begin{align}
-log(\frac{p}{1-p}) = \beta_0 + \beta_1 \times x_{sex} + \beta_2 \times x_{age\_bracket} +  \beta_3 \times x_{races} + \\
-\beta_3 \times x_{education\_level} + \beta_4 \times x_{state} + \beta_5 
-\times x_{urban} + \beta_5 \times x_{race\_black}
+Pr(vote\_biden_i =1) = logit^{-1}( \beta_0 + \beta_1 \times x_{sexi} + \beta_2 \times x_{age\_bracketi} +  \beta_3 \times x_{racesi} + \\
+\beta_3 \times x_{education\_leveli} + \beta_4 \times x_{statei} + \beta_5 
+\times x_{urbani} + \beta_5 \times x_{race\_blacki})
 \end{align}
 ```
 We run our model in R [@citeR] using the `rstanarm` package of @rstanarm. We use the default priors from `rstanarm`.
@@ -256,7 +299,7 @@ Model weaknesses: logistic regression output is binary so it does not include th
 
 ### Model justification
 
-We expect a positive relationship between the size of the wings and time spent aloft. In particular...
+We expect to see increased support for President Biden amongst Black college-educated women in urban areas.
 
 We can use maths by including latex between dollar signs, for instance $\theta$.
 
