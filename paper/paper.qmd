@@ -84,9 +84,11 @@ proportion_by_state
 ```
 
 ```{r}
+#| echo: false
+#| warning: false
+#| message: false
 #| label: fig-survey_presidential_preferences
 #| fig-cap: The Distribution of Presidential Preferences, by gender and highest level of education
-#| echo: false
 survey_analysis_data |>
   ggplot(aes(x = education_level, fill = vote24)) +
   stat_count(position = "dodge") +
@@ -104,9 +106,19 @@ survey_analysis_data |>
 
 ## Survey Data {#sec-survey}
 
-Survey data is from @americaspoliticalpulse This section should talk about the survey data set
+Our survey data is from the America's Political Pulse Survey conducted by the Polarization Research Lab. The Polarization Research Lab is a research group founded by top political science research scholars at Dartmouth College, Stanford University, and the University of Pennsylvania, dedicated to applying scientific research methods to the study of democracy and political polarization @americaspoliticalpulse. The Polarization Research Lab studies political polarization across the United States by conducting the Political Pulse Survey each week and making the results available to anyone, in real time, via their website. The America's Political Pulse Survey interviews 1000 American adults each week and asks them questions that aim to track affective polarization, support for violations of democratic norms, and support for the use of political violence in America @americaspoliticalpulse. The Polarization Research Lab makes high-level results of their survey easily accessible and visible via their website's dashboard.
+
+The specific survey data set used is the America's Political Pulse Survey Data Week 3 2024 January 12-19. It contains the responses of the 1000 American adults interviewed between January 12-19 2024. Demographic information about respondents, including sex, age, race, home state, employment status, marital status, ... is included. Participants were als asked who they voted for in the 2016 and 2020 U.S. presidential characteristics, what their party affiliation is, and what their political ideology is.
+
+However, this data set has a few major limitations. It contains very few respondents from Hawaii, Wyoming, and Kansas. It contains zero respondents from Vermont.
+
+The survey does not contain a question about preferred 2024 Presidential Candidate. In fact, it was conducted in January 2024, before Super Tuesday took place and Donald Trump had secured almost enough delegates to win the Republican nomination. At the time when this survey was conducted, former President Donald Trump, former South Carolina Governor Nikki Haley, and Florida Governor Ron DeSantis were all GOP Presidential primary candidates. Media personality Vivek Ramaswamy ended his primary campaign on January 15th, however this was in no way a clear indication that Trump had secured the nomination. As of March 11, 2024, former President Trump has secured 1078 out of the 1215 delegates needed to win the GOP nomination.
 
 ### Survey Data figures and tables go here
+
+In order to gain a better understanding of our survey data, we conducted exploratory data analysis.
+
+Within our survey data, the vote distribution between Trump and Biden varies by sex and race. As seen in @fig-survey_presidential_preferences1, Black females were more likely to vote for President Joe Biden (D-Delaware) than former President Donald Trump (R-Florida) in 2020, whereas white males were more likely to vote for former President Trump. This indicates that race might be a predictor of who an individual's preferred presidential candidate is.
 
 ```{r}
 #| label: fig-survey_presidential_preferences1
@@ -200,6 +212,29 @@ predicts support for trump or biden
 
 Here we briefly describe the Bayesian analysis model used to investigate... Background details and diagnostics are included in [Appendix -@sec-model-details].
 
+```{r survey_model, echo=F, message=F, fig.cap="Results of Regression Model"}
+library(rstanarm)
+library(arrow)
+library(dplyr)
+
+# poststrat_analy <- arrow::read_parquet("/Users/talia/US-Election-Forecast/data/analysis_data/poststrat_analysis_data.parquet")
+# 
+# poststrat_data_cells <-
+#   poststrat_analysis_data |>
+#   count(state, sex, age_group, education_level)
+# 
+# poststrat_data_cells <-
+#   poststrat_data_cells |>
+#   mutate(prop = n / sum(n),
+#          .by = stateicp)
+# 
+# poststrat_data_cells
+
+
+
+
+```
+
 ## Model set-up
 
 Define $y_i$ as the number of seconds that the plane remained aloft. Then $\beta_i$ is the wing width and $\gamma_i$ is the wing length, both measured in millimeters.
@@ -208,7 +243,8 @@ The logistic regression used to predict ... is as follows:
 
 ```{=tex}
 \begin{align}
-y_i &= \beta_0 + \beta_1 \times x_{sex} + \beta_2 \times x_{age\_bracket} + \beta_3 \times x_{races} + \beta_3 \times x_{education\_level} + \beta_4 \times x_{state} + \beta_5 
+log(\frac{p}{1-p}) = \beta_0 + \beta_1 \times x_{sex} + \beta_2 \times x_{age\_bracket} +  \beta_3 \times x_{races} + \\
+\beta_3 \times x_{education\_level} + \beta_4 \times x_{state} + \beta_5 
 \times x_{urban} + \beta_5 \times x_{race\_black}
 \end{align}
 ```
