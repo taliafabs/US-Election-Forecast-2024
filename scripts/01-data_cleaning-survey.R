@@ -67,19 +67,19 @@ reduced_survey_data2 <- reduced_survey_data2 |>
     # explain how the vote_biden variable was calculated in the data section
     vote_biden = ifelse(((pid7 == "Not very strong Democrat" |
                            pid7 == "Lean Democrat" |
-                           pid7 == "Strong Democrat" | presvote20post == "Joe Biden") & presvote16post != "Donald Trump" & presvote20post != "Donald Trump"), 
+                           pid7 == "Strong Democrat") & presvote16post != "Donald Trump" & presvote20post != "Donald Trump"), 
                         1, 
                         0),
     vote24 = ifelse(((pid7 == "Not very strong Democrat" |
                         pid7 == "Lean Democrat" |
-                        pid7 == "Strong Democrat" | presvote20post == "Joe Biden") & presvote16post != "Donald Trump" & presvote20post != "Donald Trump"), 
+                        pid7 == "Strong Democrat" ) & presvote16post != "Donald Trump" & presvote20post != "Donald Trump"), 
                     "Joe Biden", 
                     "Donald Trump"),
     sex = ifelse(gender == "Female", "female", "male"),
     # create a races variable and do the same for the post stratification data
     races = case_when(race=="White" ~ "white",
                       race=="Black" ~ "black",
-                      race=="Hispanic" ~ "hispanic",
+                      race=="Hispanic" ~ "other",
                       race=="Native American" ~ "native american",
                       race=="Asian" ~ "asian",
                       (race == "Middle Eastern" | race == "Other") ~ "other",
@@ -89,7 +89,7 @@ reduced_survey_data2 <- reduced_survey_data2 |>
     race_white = ifelse(race == "White", 1, 0),
     race_asian = ifelse(race == "Asian", 1, 0),
     race_black = ifelse(race == "Black", 1, 0),
-    race_hispanic = ifelse(race == "Hispanic", 1, 0),
+    race_hispanic = ifelse(race == "Hispanic", "hispanic", "not hispanic"),
     race_native = ifelse(race == "Native American", 1, 0),
     # indicator variable for whether they live in an urban or rural area
     urban = ifelse((urbanicity2 == "Big city"| urbanicity2 == "Smaller city"), "urban", "rural"),
@@ -105,7 +105,14 @@ survey_analysis_data <- reduced_survey_data2 |>
 survey_analysis_data <- survey_analysis_data|>
   rename(education_level = educ)
 
-# rename inputstate to state 
+# # Apply state abbreviation to full name conversion using names_matcher
+# survey_analysis_data <- survey_analysis_data %>%
+#   left_join(names_matcher, by = c("state" = "inputstate")) %>%
+#   mutate(state = stateicp) %>%
+#   select(-stateicp)
+# 
+# # Now, state column has the full names of the states
+
 survey_analysis_data <- survey_analysis_data |>
   rename(state = inputstate)
 
@@ -116,13 +123,7 @@ survey_analysis_data$state <- as.factor(survey_analysis_data$state)
 survey_analysis_data$education_level <- as.factor(survey_analysis_data$education_level)
 survey_analysis_data$faminc_new <- as.factor(survey_analysis_data$faminc_new)
 
-# # Apply state abbreviation to full name conversion using names_matcher
-# survey_analysis_data <- survey_analysis_data %>%
-#   left_join(names_matcher, by = c("state" = "inputstate")) %>%
-#   mutate(state = stateicp) %>%
-#   select(-stateicp)
-# 
-# # Now, state column has the full names of the states
+
 
 
 # save survey analysis data as a parquet under data/analysis_data

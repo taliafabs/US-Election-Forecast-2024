@@ -7,7 +7,7 @@ author:
 thanks: "Code and data are available at: https://github.com/taliafabs/US-Election-Forecast-2024.git"
 date: today
 date-format: long
-abstract: "The 2024 U.S. Presidential Election will take place on November 5th and it will be a rematch between President Joe Biden and Former President Donald Trump. Using multi-level regression with post-stratification (MRP) we found that ... Based on our results, we can predict that Joe Biden will win 59% of the popular vote. "
+abstract: "The 2024 U.S. Presidential Election will take place on November 5th and it will be a rematch between President Joe Biden and Former President Donald Trump. Using multi-level regression with post-stratification (MRP) we found that ... Based on our results, we can predict that Joe Biden will win 59.39% of the popular vote. "
 format: pdf
 number-sections: true
 bibliography: references.bib
@@ -631,11 +631,6 @@ trump_states_mean <- merged_ec |>
 
 biden_ec_lower<- sum(biden_states_mean$electoral_votes)
 trump_ec_lower <- sum(trump_states_mean$electoral_votes)
-
-
-
-
-
 ```
 
 The estimates for the support for Biden in each state are shown in @tbl-supporttbl
@@ -645,41 +640,9 @@ The estimates for the support for Biden in each state are shown in @tbl-supportt
 #| warning: false
 #| message: false
 #| eval: true
-#| #| label: tbl-popvotepost
-#| tbl-cap: "Estimated Popular Vote"
-biden_support_overall <- presidential_vote_model %>%
-  add_epred_draws(newdata = poststrat_data_cells) %>%
-  rename(support_biden_predict = .epred) %>%
-  mutate(support_biden_predict_prop = support_biden_predict * prop) %>%
-  ungroup() %>%
-  summarise(
-    "Lower Estimate" = quantile(support_biden_predict, 0.05),
-    "Mean Estimate" = mean(support_biden_predict),
-    "Upper Estimate" = quantile(support_biden_predict, 0.95)
-  )
+#| label: tbl-popvotepost
+#| tbl-cap: "Biden Estimated Popular Vote %"
 
-kable(biden_support_overall)
-```
-
-```{r}
-#| eval: true
-#| echo: false
-#| warning: false
-#|abel: tbl-supporttbl
-#| tbl-cap: "Estimates for support for Biden in each state"
-
-library(arrow)
-library(broom.mixed)
-library(gutenbergr)
-library(haven)
-library(knitr)
-library(labelled)
-library(modelsummary)
-library(rstanarm)
-library(tidybayes)
-library(tidyverse)
-
-# get proportions by demographic, then find proportion of each cell relative to population
 props <- poststrat_analysis_data %>%
   group_by(state, races, age_bracket, sex, education_level, urban) %>%
   summarise(n = n()) %>%
@@ -699,6 +662,38 @@ poststrat_data_cells <-
 poststrat_data_cells <- poststrat_data_cells %>%
   mutate(state = tolower(state))
 
+# need to fix this
+biden_support_overall <- presidential_vote_model %>%
+  add_epred_draws(newdata = poststrat_data_cells) %>%
+  rename(support_biden_predict = .epred) %>%
+  mutate(support_biden_predict_prop = support_biden_predict * prop) %>%
+  ungroup() %>%
+  summarise(
+    "Lower Estimate" = round(quantile(support_biden_predict, 0.05) * 100,2),
+    "Mean Estimate" = round(mean(support_biden_predict) * 100, 2),
+    "Upper Estimate" = round(quantile(support_biden_predict, 0.95) * 100,2)
+  )
+
+kable(biden_support_overall)
+```
+
+```{r}
+#| eval: true
+#| echo: false
+#| warning: false
+#| label: tbl-supporttbl
+#| tbl-cap: "Estimates for support for Biden in each state"
+
+library(arrow)
+library(broom.mixed)
+library(gutenbergr)
+library(haven)
+library(knitr)
+library(labelled)
+library(modelsummary)
+library(rstanarm)
+library(tidybayes)
+library(tidyverse)
 
 biden_support_by_state <-
   presidential_vote_model |>
