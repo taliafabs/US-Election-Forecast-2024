@@ -20,8 +20,12 @@ library(arrow)
 # Read in the raw post stratification data
 raw_poststrat_data <- read_dta("data/raw_data/usa_00001.dta")
 
+
 # Add labels
 raw_poststrat_data <- labelled::to_factor(raw_poststrat_data)
+
+raw_poststrat_data <- raw_poststrat_data |>
+  filter(stateicp != "state not identified")
 
 # Select relevant variables
 reduced_poststrat_data1 <- raw_poststrat_data |>
@@ -55,11 +59,8 @@ reduced_poststrat_data1$ftotinc <- as.numeric(reduced_poststrat_data1$ftotinc)
 
 # filter out any observation under age 18 since they are ineligible to vote
 # filter out income of 9999999 because this indicates NA
-reduced_poststrat_data2 <- reduced_poststrat_data1 |>
-  filter(race != "two major races", 
-         race != "three or more major races")
 
-reduced_poststrat_data2 <- reduced_poststrat_data2 |>
+reduced_poststrat_data2 <- reduced_poststrat_data1 |>
   filter(!is.na(age))
 
 reduced_poststrat_data2 <- reduced_poststrat_data2 |>
@@ -76,7 +77,7 @@ reduced_poststrat_data2 <- reduced_poststrat_data2 |>
 
 reduced_poststrat_data2 <- reduced_poststrat_data2 |>
   mutate(
-    sex = ifelse(sex == "female", 1, 0),
+    sex = ifelse(sex == "female", "female", "male"),
     races = case_when(race == "white" ~ "white",
                      race == "black/african american" ~ "black",
                      race == "chinese" ~ "asian",
@@ -85,84 +86,74 @@ reduced_poststrat_data2 <- reduced_poststrat_data2 |>
                      race == "american indian or alaska native" ~ "native american",
                      race == "two major races" ~ "mixed",
                      race == "three or more major races" ~ "mixed",
-                     race == "other race/, nec" ~ "other"
-
+                     race == "other race, nec" ~ "other"
     ),
     race_white = ifelse(race=="white", 1, 0),
     race_asian = ifelse((race == "chinese" |
                            race == "japanese" |
                            race == "other asian or pacific islander"), 1, 0),
     race_black = ifelse(race == "black/african american", 1, 0),
-    race_hispanic = ifelse((hispan == 1 | hispan == 2 | hispan == 3 | hispan == 4),
-                           1,
-                           0),
+    race_hispanic = ifelse((hispan == "mexican" | hispan == "other" | hispan == "puerto rican" | hispan == "cuban"),
+                           "hispanic",
+                           "not hispanic"),
     race_native = ifelse(race == "american indian or alaska native", 1, 0),
     urban = ifelse((metro == "in metropolitan area: in central/principal city"|
                       metro == "in metropolitan area: not in central/principal city" |
                       metro == "in metropolitan area: central/principal city status indeterminable (mixed)"),
                    "urban", "rural")
   )
-    
-reduced_poststrat_data2 <- reduced_poststrat_data2 %>%
+
+reduced_poststrat_data2 <- reduced_poststrat_data2 |>
+  filter(!is.na(educ) & educ != "n/a or no schooling") # Exclude missing values and "n/a or no schooling"
+
+reduced_poststrat_data2 <- reduced_poststrat_data2 |>
   mutate(
     education_level = case_when(
-      educ == "n/a or no schooling" ~ "No HS",
-      educ == "nursery school to grade 4" ~ "No HS",
-      educ == "grade 5, 6, 7, or 8" ~ "No HS",
-      educ == "grade 9" ~ "No HS",
-      educ == "grade 10" ~ "No HS",
-      educ == "grade 11" ~ "No HS",
+      educ %in% c("nursery school to grade 4", "grade 5, 6, 7, or 8", "grade 9", "grade 10", "grade 11") ~ "No HS",
       educ == "grade 12" ~ "High school graduate",
-      educ == "1 year of college" ~ "Some college",
-      educ == "2 years of college" ~ "2-year",
-      educ == "3 years of college" ~ "2-year",
+      educ %in% c("1 year of college", "2 years of college", "3 years of college") ~ "Some college",
       educ == "4 years of college" ~ "4-year",
       educ == "5+ years of college" ~ "Post-grad"
-    )
+    ),
+    faminc_new = cut(ftotinc,
+                     breaks = c(-Inf, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 100000, 120000, 150000, 200000, 250000, 350000, 500000, Inf),
+                     labels = c("Less than $10000", "$10000 - $19999", "$20000 - $29999", "$30000 - $39999", "$40000 - $49999", "$50000 - $59999", "$60000 - $69999", "$70000 - $79999", "$80000 - $99999", "$100000 - $119999", "$120000 - $149999", "$150000 - $199999", "$200000 - $249999", "$250000 - $349999", "$350000 - $499999", "$500000 or more"),
+                     include.lowest = TRUE)
   ) %>%
-  mutate(
-    faminc_new = case_when(ftotinc < 10000 ~ "Less than $10000",
-                                    ftotinc < 20000 ~ "$10000 - $19999",
-                                    ftotinc < 30000 ~ "$20000 - $29999",
-                                    ftotinc < 40000 ~ "$30000 - $39999",
-                                    ftotinc < 50000 ~ "$40000 - $49999",
-                                    ftotinc < 60000 ~ "$50000 - $59999",
-                                    ftotinc < 70000 ~ "$60000 - $69999",
-                                    ftotinc < 80000 ~ "$70000 - $79999",
-                                    ftotinc < 100000 ~ "$80000 - $99999",
-                                    ftotinc < 120000 ~ "$100000 - $119999",
-                                    ftotinc < 150000 ~ "$120000 - $149999",
-                                    ftotinc < 200000 ~ "$150000 - $199999",
-                                    ftotinc < 250000 ~ "$200000 - $249999",
-                                    ftotinc < 350000 ~ "$250000 - $349999",
-                                    ftotinc < 500000 ~ "$350000 - $499999",
-                                    ftotinc >= 500000 ~ "$500000 or more")
-    ) %>%
   mutate(
     age_bracket = case_when(age < 30 ~ "18-29",
                             age < 45 ~ "30-44",
                             age < 60 ~ "45-59",
-                            age >= 60 ~ "60+")
-  ) %>%
-  mutate(
-    urban = ifelse((metro == "in metropolitan area: in central/principal city"| 
-                    metro == "in metropolitan area: not in central/principal city" |
-                    metro == "in metropolitan area: central/principal city status indeterminable (mixed)"), "urban", "rural")) %>%
-  mutate(
+                            age >= 60 ~ "60+"),
+    urban = ifelse(metro %in% c("in metropolitan area: in central/principal city", "in metropolitan area: not in central/principal city", "in metropolitan area: central/principal city status indeterminable (mixed)"), "urban", "rural"),
     sex = ifelse(sex == "female", "female", "male")
-    )
+  )
 
-# change variables into factors
+# remove observations with NA in any of the variables
+reduced_poststrat_data2 <- reduced_poststrat_data2 |>
+  filter(!is.na(races)) |>
+  filter(!is.na(stateicp)) |>
+  filter(!is.na(sex)) |>
+  filter(!is.na(age_bracket)) |>
+  filter(!is.na(urban))
+
+# Convert variables into factors
 reduced_poststrat_data2$races <- as.factor(reduced_poststrat_data2$races)
-reduced_poststrat_data2$education_level <- as.factor(reduced_poststrat_data2$education_level)
+reduced_poststrat_data2$education_level <- factor(reduced_poststrat_data2$education_level, levels = c("No HS", 
+                                                                                                      "High school graduate", 
+                                                                                                      "Some college", 
+                                                                                                      "4-year", 
+                                                                                                      "Post-grad"))
 reduced_poststrat_data2$faminc_new <- as.factor(reduced_poststrat_data2$faminc_new)
 reduced_poststrat_data2$sex <- as.factor(reduced_poststrat_data2$sex)
-# reduced_poststrat_data2$stateicp <- as.factor(reduced_poststrat_data2$stateicp)
+reduced_poststrat_data$stateicp <- as.factor(reduced_poststrat_data$stateicp)
+
 
 poststrat_analysis_data <- reduced_poststrat_data2 |>
   select(birthyr, age, age_bracket, sex, races, race_white,
-         race_asian, race_black, race_hispanic, race_native, educ, faminc_new,
+         race_asian, race_black, race_hispanic, race_native, education_level, faminc_new,
          stateicp, urban)
+
 
 # rename stateicp to state to match survey data
 poststrat_analysis_data <- poststrat_analysis_data |>
@@ -171,5 +162,4 @@ poststrat_analysis_data <- poststrat_analysis_data |>
 # write post-stratification analysis data into data/analysis_data folder 
 # add it to the gitignore
 write_parquet(poststrat_analysis_data, "data/analysis_data/poststrat_analysis_data.parquet")
-
 

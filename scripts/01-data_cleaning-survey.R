@@ -64,14 +64,15 @@ reduced_survey_data2 <- reduced_survey_data2 |>
                             age < 45 ~ "30-44",
                             age < 60 ~ "45-59",
                             age >= 60 ~ "60+"),
+    # explain how the vote_biden variable was calculated in the data section
     vote_biden = ifelse(((pid7 == "Not very strong Democrat" |
                            pid7 == "Lean Democrat" |
-                           pid7 == "Strong Democrat") & presvote16post != "Donald Trump" & presvote20post != "Donald Trump"), 
+                           pid7 == "Strong Democrat" | presvote20post == "Joe Biden") & presvote16post != "Donald Trump" & presvote20post != "Donald Trump"), 
                         1, 
                         0),
     vote24 = ifelse(((pid7 == "Not very strong Democrat" |
                         pid7 == "Lean Democrat" |
-                        pid7 == "Strong Democrat") & presvote16post != "Donald Trump" & presvote20post != "Donald Trump"), 
+                        pid7 == "Strong Democrat" | presvote20post == "Joe Biden") & presvote16post != "Donald Trump" & presvote20post != "Donald Trump"), 
                     "Joe Biden", 
                     "Donald Trump"),
     sex = ifelse(gender == "Female", "female", "male"),
@@ -114,6 +115,14 @@ survey_analysis_data$races <- as.factor(survey_analysis_data$races)
 survey_analysis_data$state <- as.factor(survey_analysis_data$state)
 survey_analysis_data$education_level <- as.factor(survey_analysis_data$education_level)
 survey_analysis_data$faminc_new <- as.factor(survey_analysis_data$faminc_new)
+
+# # Apply state abbreviation to full name conversion using names_matcher
+# survey_analysis_data <- survey_analysis_data %>%
+#   left_join(names_matcher, by = c("state" = "inputstate")) %>%
+#   mutate(state = stateicp) %>%
+#   select(-stateicp)
+# 
+# # Now, state column has the full names of the states
 
 
 # save survey analysis data as a parquet under data/analysis_data
