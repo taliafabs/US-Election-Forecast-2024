@@ -28,11 +28,9 @@ set.seed(853)
 
 # Want to explain vote choice based on various explanatory variables
 # Use logistic regression
-# Model fit, diagnostics,
 
 # start with simpler model then make it more complicated if needed
 # state seems to be causing the warnings but this is not something we want to exclude
-# removed state for now
 presidential_vote_model <- stan_glm(
   formula = vote_biden ~ sex + age_bracket + races + education_level + urban,
   data = survey_analysis_data,
