@@ -173,4 +173,49 @@ We iterate over the test cases using a for loop and check whether the actual out
 If the test passes, we print a message indicating that the test passed. Otherwise, we print a message indicating that the test failed along with the input, expected output, and actual output.
 This approach works for simple scenarios, but as your testing needs become more complex, you may find it beneficial to use testing frameworks like testthat for better organization and functionality.
 
+LLM: ChatGPT 3.5
+Date: 16 March 2024
+
+User
+how do i get a new line between these plots #| echo: false
+#| eval: true
+#| message: false
+#| warning: false
+#| label: fig-stanareyouokay
+#| fig-cap: "Checking the convergence of the MCMC algorithm"
+#| fig-subcap: ["Trace plot", 
+#| "Rhat plot"]
+#| layout-ncol: 2
+
+plot(presidential_vote_model, "trace")
+
+plot(presidential_vote_model, "rhat")
+ChatGPT
+To insert a newline between the plots while keeping the layout specified, you can use the par() function in R. Here's how you can modify your code:
+
+r
+Copy code
+#| echo: false
+#| eval: true
+#| message: false
+#| warning: false
+#| label: fig-stanareyouokay
+#| fig-cap: "Checking the convergence of the MCMC algorithm"
+#| fig-subcap: ["Trace plot", 
+#| "Rhat plot"]
+#| layout-ncol: 2
+
+# Set the layout
+par(mfrow=c(2,1))
+
+# Plot the first graph
+plot(presidential_vote_model, "trace")
+
+# Add a newline
+cat("\n")
+
+# Plot the second graph
+plot(presidential_vote_model, "rhat")
+This code will arrange the plots in a 2x1 grid layout with a newline between them. Adjust the layout as per your requirement.
+
 
