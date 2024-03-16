@@ -7,7 +7,7 @@ author:
 thanks: "Code and data are available at: https://github.com/taliafabs/US-Election-Forecast-2024.git"
 date: today
 date-format: long
-abstract: "The 2024 U.S. Presidential Election will take place on November 5th and it will be a rematch between President Joe Biden and Former President Donald Trump. In this report, we used a logistic regression model along with multi-level post-stratification (MRP) to predict the winner of the upcoming election. Using the results of our model, we predict that President Biden will win 55.9% of the popular vote and defeat former President Trump 467 to 71 in the electoral college, and win a second term in the White House. However, due to the limited nature of our survey data, the error range of our electoral college prediction is large."
+abstract: "The 2024 U.S. Presidential Election will take place on November 5th and it will be a rematch between President Joe Biden and Former President Donald Trump. In this report, we used a logistic regression model along with multi-level post-stratification (MRP) to predict the winner of the upcoming election. Using the results of our model, we predict that President Biden will win 56.59% of the popular vote and defeat former President Trump 467 to 71 in the electoral college, and win a second term in the White House. However, due to the limited nature of our survey data, the error range of our electoral college prediction is large."
 format: pdf
 number-sections: true
 bibliography: references.bib
@@ -42,23 +42,21 @@ head(survey_analysis_data)
 
 The 2024 U.S. Presidential Election will take place on Tuesday November 5 2024. Incumbent President Joe Biden will seek a second term in a rematch against his 2020 opponent and, arguably, the most polarizing figure in American politics, former President Donald Trump.
 
+Donald Trump refused to acknowledge his loss to Joe Biden in the 2020 U.S. presidential election. Since November 2020, he has falsely claimed that the election was fraudulent, and that Biden stole the election from him. On January 6, 2021, an angry pro-Trump mob stormed the U.S. Capitol in an attempt to "stop the steal," or in other words, to stop the certification of Biden's electoral college victory and overturn the results of the election. 
+
 Packages used for data cleaning, model, visualizations, and tables: `tidyverse` @citetidyverse, `janitor` @citejanitor, `rstanarm`, `readr`, `ggplot2`, `knitr`, and `arrow`.
 
 The remainder of this paper is structured as follows. @sec-data discusses the survey and post-stratification data used.
 
-Talk about polarization in a discussion point instead of introduction
 
-Clear gap that needs to be filled ... what is the research gap and why is this important? - 2024 US Presidential Election - how consequential this election is - what is on the ballot - women's rights - trump's project 2025 thing
 
-If someone's done it before not on this data set not in this context
+Clear gap that needs to be filled ... what is the research gap and why is this important? - 2024 US Presidential Election - how consequential this election is - what is on the ballot - women's rights - trump's project 2025 thing.
 
-Previous groups have looked at ...
+If someone's done it before not on this data set not in this context.
 
 The survey data for our study was provided by the Polarization Research Lab. The Polarization Research Lab was formed by a group of researchers to increase understanding of where partisan animosity comes from and what can be done to help [@americaspoliticalpulse]. The post-stratification data for this study was provided by the Integrated Public Use Microdata Series (IPUMS). IPUMS is an organization which lays out survey and census data with the help of 105 statistical agencies [@citeIPUMS]. We used the data from the 2022 American Community Survey (ACS) for this report [@citeIPUMS].
 
-Our report has 5 sections.
-
-We are using multi-level regression with post-stratification (MRP) to predict the results of the 2024 U.S. presidential election. MRP uses two different data sets, survey data and post-stratification data. It fits a model using the smaller survey data set and applies it to the larger post-stratification data set.
+Our report has 5 sections. In @sec-data, we examine the data sets that we used for our report. In @sec-model, we we use multi-level regression with post-stratification (MRP) to predict the results of the 2024 U.S. presidential election. MRP uses two different data sets, our survey data and our post-stratification data. It fits a model using the smaller survey data set and applies it to the larger post-stratification data set. In @sec-results, we present the findings of our model. In @sec-discussion, we discuss what we learned.
 
 @citeR was used
 
@@ -100,24 +98,7 @@ We are focusing on demographics and other variables that might indicate who each
 
 The survey does not contain a question about a preferred 2024 Presidential Candidate. In fact, it was conducted in January 2024, before Super Tuesday took place and Donald Trump had secured almost enough delegates to win the Republican (GOP) nomination. As of March 11, 2024, former President Trump has secured 1078 out of the 1215 delegates needed to win the GOP nomination. Therefore, we were able to conclude that the two major candidates in the upcoming election will be incumbent President Joe Biden and former President Donald Trump. We created a `vote_biden` binary variable that indicates a respondent's preferred presidential candidate in the upcoming 2024 presidential election. It is equal to 1, which indicates that the respondent's preferred presidential candidate is Joe Biden, if their party affiliation is Democratic. `vote_biden` is equal to 0 otherwise, indicating that a respondent's preferred presidential candidate is Donald Trump. Donald Trump is arguably the most polarizing figure in American politics, therefore we are considering independents who voted for Joe Biden in 2020 to prefer Joe Biden over Donald Trump again in 2024. It is important to note that because `vote_biden` is a binary variable, it only considers two possible presidential candidates: Joe Biden and Donald Trump. In the context of this report and the `vote_biden` variable, voting for a third-party candidate, a write-in vote, or not voting are not considered possible voting outcomes.
 
-```{r}
-#| echo: false
-#| warning: false
-#| message: false
-#| eval: true
-#| label: tbl-racessurvey
-#| tbl-cap: Races of survey respondents
-
-races_table <- survey_analysis_data |>
-  group_by(races) |>
-  summarize("%" = round(n() / nrow(survey_analysis_data) * 100, 2))
-
-races_table <- races_table |> rename(Race = races)
-
-kable(races_table)
-```
-
-In @fig-survey_presidential_preferences1, we can see that support for Biden within our survey data varies by race and sex. Black women showed overwhelming support for President Biden's upcoming re-election campaign, while white men appear to be split between Biden and Trump. As shown in @tbl-racessurvey 69% of respondents were white. Among white survey respondents, women were more likely to support President Biden and men were more likely to support Trump. We used some of the code from Chapter 13 of Telling Stories with Data and modified it to produce the bar graphs in this section [@tswd].
+In @fig-survey_presidential_preferences1, we can see that support for Biden within our survey data varies by race and sex. Black women showed overwhelming support for President Biden's upcoming re-election campaign, while white men appear to be split between Biden and Trump. As shown in @tbl-racetables 69% of respondents were white. Among white survey respondents, women were more likely to support President Biden and men were more likely to support Trump. We used code from Chapter 13 of Telling Stories with Data and modified it to produce the bar graphs in this section [@tswd].
 
 ```{r}
 #| echo: false
@@ -195,7 +176,7 @@ survey_analysis_data |>
 
 ```
 
-Overall, Biden outperformed Trump in urban areas, with the support of 60.22% of survey respondents living in urban areas. This is unsurprising, and it is a continuation of the pattern observed in recent presidential elections. @citeScala found that both former President Barack Obama and 2016 Democratic nominee Hillary Clinton performed well in densely populated urban areas, but faced increasingly challenging political climates and diminished voter support in rural areas. Hillary Clinton saw a particularly pronounced decline in support in rural areas in the 2016 election, where she was defeated by Donald Trump (Scala, 2016). Our survey data is somewhat consistent with this, as Biden trails Trump among survey respondents living in rural areas, with 46.20% support.
+Overall, Biden outperformed Trump in urban areas, with the support of 60.22% of survey respondents living in urban areas. This is unsurprising, and it is a continuation of the pattern observed in recent presidential elections. @citeScala found that both former President Barack Obama and 2016 Democratic nominee Hillary Clinton performed well in densely populated urban areas, but faced increasingly challenging political climates and diminished voter support in rural areas. Hillary Clinton saw a particularly pronounced decline in support in rural areas in the 2016 election, where she was defeated by Donald Trump (Scala, 2016). Our survey data is somewhat consistent with this, as Biden trails Trump among survey respondents living in rural areas, with 46.20% support. 
 
 ```{r}
 #| echo: false
@@ -225,7 +206,7 @@ kable(urban_rural, align = "c") %>%
   kable_styling(bootstrap_options = "striped", full_width = F)
 ```
 
-Using only the survey data, we can calculate the overall support for Biden and the support for Biden in each state to make a popular vote and electoral college prediction. Based on our earlier findings, we believe that being non-white, female, college or post-grad educated, and living in an urban area makes an individual more likely to support Biden. To calculate a popular vote prediction for President Biden based on the survey data, we simply calculated the mean of the `vote_biden` binary indicator variable, and to calculate an electoral college prediction, we added up the electoral college votes of the states where Biden received more than 50% support from survey respondents. We used the steps and code provided by @citeMatthew and the `statebins` package [@statebins] to produce @fig-electoral-map-survey .
+Using only the survey data, we can calculate the overall support for Biden and the support for Biden in each state to make a popular vote and electoral college prediction. Based on our earlier findings, we believe that being non-white, female, college or post-grad educated, and living in an urban area makes an individual more likely to support Biden. To calculate a popular vote prediction for President Biden based on the survey data, we simply calculated the mean of the `vote_biden` binary indicator variable, and to calculate an electoral college prediction, we added up the electoral college votes of the states where Biden received more than 50% support from survey respondents. We used the steps and code provided by @citeMatthew and the `statebins` package [@statebins] to produce @fig-electoral-map-survey.
 
 ```{r}
 #| echo: false
@@ -329,30 +310,6 @@ It is important to note America's Political Pulse survey data set only contains 
 
 Our post-stratification data is a subset of the American Community Survey (ACS) 2022 provided by IPUMS [@citeIPUMS].
 
-We selected variables that mirror the ones in our survey data set.
-
-```{r}
-#| echo: false
-#| warning: false
-#| message: false
-#| label: tbl-racetable2
-#| tbl-cap: Races of post stratification data
-
-races2 <- poststrat_analysis_data %>% 
-  group_by(races) %>% 
-  summarise(n = n()) %>% 
-  mutate(pct = round((n/sum(n)*100),2), type = "survey",
-         group = "races") 
-
-races2 |> rename("Count" = n)
-  
-races2 |> rename(Race = races) 
-
-races2 |> rename("%" = pct)
-
-kable(races2)
-```
-
 Our raw post-stratification data set has 500,000 records. We selected variables that mirror the ones that we have in our survey data set, including:
 
 -   `age`: the age of the census respondent
@@ -361,13 +318,15 @@ Our raw post-stratification data set has 500,000 records. We selected variables 
 
 -   `race`: the race of the census respondent.
 
+-   `hispan`: whether the respondent is of Hispanic origin or not.
+
 -   `educ`: highest level of education completed.
 
 -   `stateicp`: state of residence.
 
 -   `metro`: whether the respondent lives in a metropolitan area or not.
 
-The sex, race, educ, and metro variables were cleaned and re-factored to mirror our survey data and to allow us to apply our model to our post-stratification data. @fig-demographics1 shows the demographic statistics of our survey and post-stratification data. The steps and code for producing @fig-demographics1 were obtained from @citeMatthew.
+The sex, race, educ, and metro variables were cleaned and re-factored to mirror our survey data and to allow us to apply our model to our post-stratification data. @fig-demographics1 shows the demographic statistics of our survey and post-stratification data. The steps and code for producing @fig-demographics1 were obtained from @citeMatthew. We also created a `race_hispanic`, which is equal to either "hispanic" or "not hispanic" to ensure that our survey and post-stratification data sets would align, because this was a separate variable from race in our post-stratification data.
 
 ```{r}
 #| echo: false
@@ -469,7 +428,36 @@ demographic_variables |> ggplot(aes(as.factor(level), pct, group=as.factor(type)
   labs(x = "Category", y = "Proportion", linetype = "data set") +
   scale_y_continuous(labels = scales::percent) +
   geom_hline(yintercept = 0.5, alpha = 0.35) 
+```
 
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+#| include: true
+#| label: tbl-racetables
+#| tbl-cap: Races of survey and post stratification data respondents
+#| tbl-subcap: ["Survey data", "Post-stratification data"]
+#| layout-ncol: 2
+
+races_table <- survey_analysis_data |>
+  group_by(races) |>
+   summarise(Count = n()) |>
+  mutate("%" = round(Count / nrow(survey_analysis_data) * 100, 2))
+
+races_table <- races_table |> rename(Race = races)
+
+kable(races_table)
+
+
+races2 <- poststrat_analysis_data |>
+  group_by(races) |>
+  summarise(Count = n())|>
+  mutate("%" = round(Count / nrow(poststrat_analysis_data) * 100, 2)) 
+
+races2 <- races2 |> rename(Race = races)
+
+kable(races2)
 ```
 
 ```{r}
@@ -489,14 +477,17 @@ race_variables |> ggplot(aes(as.factor(level), pct, group=as.factor(type), linet
   geom_hline(yintercept = 0.5, alpha = 0.35) 
 ```
 
+Overall, race demographics are consistent between our survey and post-stratification data sets. @tbl-racetables shows the exact count and proportion of respondents of different races in each data set. The proportion of Hispanic respondents in our survey and post-stratification data is comparable, at 12.7% and 13.5%, respectively. While there is a higher proportion of Hispanic respondents in our post-stratification data set, the difference is less than one percentage point. The proportions of white respondents in our survey (69.4%) and post-stratification (69.5%) data sets are nearly identical. Black respondents make up
+
 @fig-stateprops illustrates the distribution of voters across the 50 states, including Washington D.C. in both our survey and post-stratification data sets. The steps and code for producing @fig-stateprops were obtained from @citeMatthew.
 
 ```{r}
 #| echo: false
 #| warning: false
 #| message: false
+#| eval: true
 #| label: fig-stateprops
-#| tbl-cap: Survey and Post-Stratification Data Proportion of Voters by State
+#| fig-cap: Survey and Post-Stratification Data Proportion of Voters by State
 
 # steps obtained from matthewwankiewicz github repo US_election_forecast
 
@@ -524,29 +515,21 @@ voters_by_state |> ggplot(aes(as.factor(level), pct, group=as.factor(type), line
   scale_y_continuous(labels = scales::percent)
 ```
 
-However, we can see that there are some slight discrepancies in the proportions of respondents in the survey and post-stratification data from Alabama, California, Florida, Kansas, Maryland, Massachussets, Michigan, New York, Nebraska, and Virginia.
+We can see that there are some slight differences in the proportions of respondents in the survey and post-stratification data from Alabama, California, Florida, Kansas, Maryland, Massachussets, Michigan, New York, Nebraska, and Virginia.
 
 None of the voters in our survey data are from Vermont, but 0.198% of the voters in our post-stratification data are. Therefore, the results from applying our model to our post-stratification data will include a prediction for Vermont.
 
 @fig-stateprops shows that there is a comparable distribution of voters across U.S. states in the survey and post-stratification data. However, the survey data over represents Florida, Michigan, New York, and Virginia.
 
-# Model
 
+# Model {#sec-model}
 We will use multilevel regression with post-stratification (MRP) for our analysis.
 
 ## Model set-up
-
 To predict whether a person will vote for Joe Biden or Donald Trump, we fitted a logistic regression model using data from the America's Political Pulse Survey [@americaspoliticalpulse] and post-stratified it using ACS census data [@citeIPUMS]. Logistic regression only works for binary classification, therefore we created a `vote_biden` variable during our data cleaning process, which is equal to 1 if a person's preferred candidate is Joe Biden, and 0 if it is Donald Trump.
 
-The logistic regression model used to predict support for Biden using sex, age, race, highest level of education, state, and whether the individual lives in an urban or rural area is as follows:
+We are interested in estimating We fitted a logistic regression model used to predict support for Biden using sex, age, race, race_hispanic, highest level of education, state, and urban as predictors on the America's Political Pulse survey data. We then applied it to the ACS 2022 census data. Our model is as follows:
 
-<small>
-
-$$
-Pr(vote\_biden=1) = \text{logit}^{-1}(\beta_0 + \beta_1 \text{sex}_i + \beta_2  \text{age\_bracket}_i + \beta_3 \text{race}_i + \beta_4 race_hispanic_i + \beta_5 \text{education\_level}_i + \beta_6 \text{urban}_i )
-$$
-
-</small>
 
 We run our model in R [@citeR] using the `stan_glm()` function of the `rstanarm` package [@rstanarm]. We use the default priors from `rstanarm`.
 
@@ -577,19 +560,7 @@ presidential_vote_model <-
   readRDS(file = here::here("models/presidential_vote_model.rds"))
 ```
 
-```{r}
-#| echo: false
-#| eval: true
-#| label: tbl-modelsummary
-#| tbl-cap: "Coefficient estimates"
-#| warning: false
-
-
-# looking at coefficient estimates using modelsummary()
-modelsummary::modelsummary(presidential_vote_model)
-```
-
-# Results
+# Results {#sec-results}
 
 ```{r}
 #| eval: true
@@ -643,8 +614,9 @@ popular vote
 #| warning: false
 #| message: false
 #| eval: true
-#| label: tbl-popvotepost
-#| tbl-cap: "Popular Vote Estimates for Joe Biden"
+#| label: tbl-popvotepost-popularvote
+#| tbl-cap: "2024 U.S. election result estimates for Joe Biden based on post-stratification"
+#| tbl-subcap: ["Popular Vote", "Electoral College"]
 
 props <- poststrat_analysis_data %>%
   group_by(state, races, race_hispanic, age_bracket, sex, education_level, urban) %>%
@@ -681,20 +653,7 @@ biden_popvote <- tibble(
 # Set row names
 rownames(biden_popvote) <- NULL
 
-# Render the table using kable
-kable(biden_popvote, align = "c") %>%
-  kable_styling(bootstrap_options = "striped", full_width = F)
-```
-
-electoral college
-
-```{r}
-#| eval: true
-#| echo: false
-#| warning: false
-#|abel: tbl-ecpost
-#| tbl-cap: "Estimates for the Electoral College based on Post-Stratification"
-
+# electoral college
 # had chatgpt make me an electoral college csv
 electoral_college <- read_csv("electoral_college_votes.csv", show_col_types = FALSE)
 
@@ -726,7 +685,7 @@ biden_ec_upper <- sum(biden_states_upper$electoral_votes)
 
 
 biden_ec_poststrat <- tibble(
-  "Electoral College Estimate:" = c("Lower", "Mean", "Upper"),
+  "Electoral College Estimate:" = c("Lower Estimate", "Mean Estimate", "Upper Estimate"),
   "Biden" = c(biden_ec_lower, biden_ec_mean, biden_ec_upper),
   "Trump" = c(538-biden_ec_lower, 538-biden_ec_mean, 538-biden_ec_upper)
 )
@@ -734,10 +693,16 @@ biden_ec_poststrat <- tibble(
 # Set row names
 rownames(biden_ec_poststrat) <- NULL
 
-# Render the table using kable
+# popular vote table
+kable(biden_popvote, align = "c") %>%
+  kable_styling(bootstrap_options = "striped", full_width = F)
+
+# electoral college table
 kable(biden_ec_poststrat, align = "c") %>%
   kable_styling(bootstrap_options = "striped", full_width = F)
 ```
+
+electoral college
 
 The estimates for the support for Biden in each state are shown in @tbl-supporttbl
 
@@ -839,15 +804,15 @@ poststrat_electoral_map %>%
 
 type here
 
-# Discussion
+# Discussion {#sec-discussion}
 
 ## Popular Vote Projection {#sec-first-point}
 
 If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this.
 
-## Electoral College Projection
+## Electoral College Projection {#sec-second-point}
 
-## Large Variation
+## Large Variation {#sec-third-point}
 
 ## Weaknesses and Limitations {#sec-weaknesses-limitations}
 
@@ -863,9 +828,16 @@ Weaknesses and next steps should also be included.
 
 ## Data Cleaning
 
-# Model details {#sec-model-details}
+## Model Details
 
-type something here
+```{r}
+#| echo: false
+#| eval: true
+#| warning: false
+
+modelsummary::modelsummary(presidential_vote_model)
+# looking at coefficient estimates using modelsummary()
+```
 
 ```{r}
 #| eval: true
@@ -926,7 +898,7 @@ Model plot (still need to fix this)
 
 ## Diagnostics
 
-@fig-stanareyouokay-1 is a trace plot. It shows... This suggests...
+@fig-stanareyouokay-1 is a trace plot. It shows that the lines have a wide overlap with each other. This suggests that there is no poor convergence and the distribution behaves as expected.
 
 @fig-stanareyouokay-2 is a Rhat plot. It shows... This suggests...
 
@@ -937,8 +909,7 @@ Model plot (still need to fix this)
 #| warning: false
 #| label: fig-stanareyouokay
 #| fig-cap: "Checking the convergence of the MCMC algorithm"
-#| fig-subcap: ["Trace plot", 
-#| "Rhat plot"]
+#| fig-subcap: ["Trace plot", "Rhat plot"]
 #| layout-ncol: 2
 
 par(mfrow=c(2,1))
