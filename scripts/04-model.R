@@ -32,7 +32,7 @@ set.seed(853)
 # start with simpler model then make it more complicated if needed
 # state seems to be causing the warnings but this is not something we want to exclude
 presidential_vote_model <- stan_glm(
-  formula = vote_biden ~ sex + age_bracket + races + education_level + urban,
+  formula = vote_biden ~ sex + age_bracket + races + race_hispanic + education_level + urban,
   data = survey_analysis_data,
   family = binomial(link="logit"),
   prior = normal(location = 0, scale = 2.5, autoscale = TRUE),
