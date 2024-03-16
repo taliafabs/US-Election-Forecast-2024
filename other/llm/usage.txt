@@ -218,4 +218,238 @@ cat("\n")
 plot(presidential_vote_model, "rhat")
 This code will arrange the plots in a 2x1 grid layout with a newline between them. Adjust the layout as per your requirement.
 
+User
+fix this Error reading bibliography file references.bib:
+(line 202, column 3):
+unexpected 'o'
+@Manual{citeR,
+    title = {R: A Language and Environment for Statistical Computing},
+    author = {{R Core Team}},
+    organization = {R Foundation for Statistical Computing},
+    address = {Vienna, Austria},
+    year = {2023},
+    url = {https://www.R-project.org/},
+  }
+
+@Manual{citejanitor,
+    title = {janitor: Simple Tools for Examining and Cleaning Dirty Data},
+    author = {Sam Firke},
+    year = {2023},
+    note = {R package version 2.2.0, 
+    https://sfirke.github.io/janitor/},
+    url = {https://github.com/sfirke/janitor},
+  }
+  
+  
+@Article{citetidyverse,
+    title = {Welcome to the {tidyverse}},
+    author = {Hadley Wickham and Mara Averick and Jennifer Bryan and Winston Chang and Lucy D'Agostino McGowan and Romain François and Garrett Grolemund and Alex Hayes and Lionel Henry and Jim Hester and Max Kuhn and Thomas Lin Pedersen and Evan Miller and Stephan Milton Bache and Kirill Müller and Jeroen Ooms and David Robinson and Dana Paige Seidel and Vitalie Spinu and Kohske Takahashi and Davis Vaughan and Claus Wilke and Kara Woo and Hiroaki Yutani},
+    year = {2019},
+    journal = {Journal of Open Source Software},
+    volume = {4},
+    number = {43},
+    pages = {1686},
+    doi = {10.21105/joss.01686},
+  }
+
+@Manual{citereadr,
+    title = {readr: Read Rectangular Text Data},
+    author = {Hadley Wickham and Jim Hester and Jennifer Bryan},
+    year = {2023},
+    note = {R package version 2.1.4},
+    url = {https://CRAN.R-project.org/package=readr},
+  }
+  
+@manual{americaspoliticalpulse,
+  title={America's Political Pulse},
+  author={Shanto Iyengar and Yphtach Lelkes and Sean Westwood},
+  year={2024},
+  url={https://polarizationresearchlab.org/americas-political-pulse/},
+}
+  
+@article{gebru2021datasheets,
+  title={Datasheets for datasets},
+  author={Gebru, Timnit and Morgenstern, Jamie and Vecchione, Briana and Vaughan, Jennifer Wortman and Wallach, Hanna and Iii, Hal Daum{\'e} and Crawford, Kate},
+  journal={Communications of the ACM},
+  volume={64},
+  number={12},
+  pages={86--92},
+  year={2021},
+  publisher={ACM New York, NY, USA}
+}
+
+@Misc{rstanarm,
+    title = {rstanarm: {Bayesian} applied regression modeling via {Stan}},
+    author = {Ben Goodrich and Jonah Gabry and Imad Ali and Sam Brilleman},
+    note = {R package version 2.21.3},
+    year = {2022},
+    url = {https://mc-stan.org/rstanarm/},
+  }
+
+
+@Book{citeggplot,
+    author = {Hadley Wickham},
+    title = {ggplot2: Elegant Graphics for Data Analysis},
+    publisher = {Springer-Verlag New York},
+    year = {2016},
+    isbn = {978-3-319-24277-4},
+    url = {https://ggplot2.tidyverse.org},
+  }
+  
+@Manual{citearrow,
+    title = {arrow: Integration to 'Apache' 'Arrow'},
+    author = {Neal Richardson and Ian Cook and Nic Crane and Dewey Dunnington and Romain François and Jonathan Keane and Dragoș Moldovan-Grünfeld and Jeroen Ooms and Jacob Wujciak-Jens and {Apache Arrow}},
+    year = {2023},
+    note = {R package version 14.0.0.2},
+    url = {https://CRAN.R-project.org/package=arrow},
+  }
+  
+  @Article{citemodelsummary,
+    title = {{modelsummary}: Data and Model Summaries in {R}},
+    author = {Vincent Arel-Bundock},
+    journal = {Journal of Statistical Software},
+    year = {2022},
+    volume = {103},
+    number = {1},
+    pages = {1--23},
+    doi = {10.18637/jss.v103.i01},
+  }
+
+  @Manual{citehaven,
+    title = {haven: Import and Export 'SPSS', 'Stata' and 'SAS' Files},
+    author = {Hadley Wickham and Evan Miller and Danny Smith},
+    year = {2023},
+    note = {R package version 2.5.4},
+    url = {https://CRAN.R-project.org/package=haven},
+  }
+
+@Manual{citeIPUMS,
+  title = {IPUMS USA: Version 15.0 [ACS 2022]},
+  author = {Steven Ruggles, Sarah Flood, Matthew Sobek, Daniel Backman, Annie Chen, Grace Cooper, Stephanie Richards, Renae Rodgers, and Megan Schouweiler},
+  year = {2024},
+  organization = {Minneapolis, MN: IPUMS},
+  url = {https://doi.org/10.18128/D010.V15.0},
+  }
+  
+@Manual{citeScala,
+  title={Political Polarization along the Rural-Urban Continuum? The Geography of the Presidential Vote, 2000–2016},
+  author={Dante J. Scala and Kenneth M. Johnson},
+  year={2016},
+  volume={672},
+  number={1},
+  organization={The American Academy of Political and Social Science},
+  doi={https://doi.org/10.1177/00027162177126},
+}
+  
+@Manual{citeArchives,
+  title={Distribution of Electoral Votes},
+  author={The U.S. National Archives and Records Administration},
+  url={https://www.archives.gov/electoral-college/allocation},
+}
+
+@Misc{citerstanarm,
+    title = {Joint longitudinal and time-to-event models via {Stan}.},
+    author = {SL Brilleman and MJ Crowther and M Moreno-Betancur and J {Buros Novik} and R Wolfe},
+    note = {StanCon 2018. 10-12 Jan 2018. Pacific Grove, CA, USA.},
+    url = {https://github.com/stan-dev/stancon_talks/},
+    year = {2018},
+  }
+
+@Manual{citecornellians,
+  title={Exploring the Widening Chasm Between Urban and Rural Voters},
+  author={Cornellians Staff},
+  year={2022},
+  organization={Cornell University Department of Government},
+  url={https://government.cornell.edu/news/exploring-widening-chasm-between-urban-and-rural-voters},
+}
+
+@Manual{citeCNN,
+  title={America's Choice 2020},
+  author={CNN Politics},
+  organization = {CNN},
+  year={2020},
+  url={https://www.cnn.com/election/2020/results/state/wyoming/president},
+}
+
+@Manual{citeGhitza,
+  title={What Happened in 2020},
+  author={Yair Ghitza and Jonathan Robinson},
+  organization={Catalist},
+  year={2020},
+  url={https://catalist.us/wh-national/},
+}
+
+@Manual{citeMatthew,
+  title={Joe Biden projected to win Popular Vote in 2020 US Election with 51% of the vote},
+  author={Alen Mitrovski, Xiaoyan Yang, Matthew Wankiewicz},
+  organization={Telling Stories with Data},
+  year={2020},
+  url={https://github.com/matthewwankiewicz/US_election_forecast/tree/main},
+}
+
+@Manual{tswd,
+  title={Telling Stories with Data},
+  author = {Rohan Alexander},
+  organization={"University of Toronto"},
+  year={2023},
+  url={https://www.tellingstorieswithdata.com},
+}
+
+  @Manual{statebins,
+    title = {statebins: Create United States Uniform Cartogram Heatmaps},
+    author = {Bob Rudis},
+    year = {2020},
+    note = {R package version 1.4.0},
+    url = {https://CRAN.R-project.org/package=statebins},
+  }
+
+@Manual{citeAxelrod,
+  title={A timeline of Donald Trump's election denial claims, which Republican politicians increasingly embrace},
+  author={Tal Axelrod},
+  organization={ABC News},
+  year={2022},
+  url={https://abcnews.go.com/Politics/timeline-donald-trumps-election-denial-claims-republican-politicians/story?id=89168408},
+}
+
+@Manual{citeKapur,
+  title={Trump: 'I was able to kill Roe v. Wade'
+},
+  author={Sahil Kapur},
+  organization={NBC News},
+  year={2023},
+  url={https://www.nbcnews.com/politics/donald-trump/trump-was-able-kill-roe-v-wade-rcna84897},
+  }
+
+@Manual{citeLonsdorf,
+  title={A timeline of the Jan. 6 Capitol attack — including when and how Trump responded},
+  author={Kat Lonsdorf, Courtney Dorning, Amy Isackson, Mary Louise Kelly, Alisa Chang}
+  organization={NPR News},
+  year={2024},
+  url={https://www.npr.org/2022/01/05/1069977469/a-timeline-of-how-the-jan-6-attack-unfolded-including-who-said-what-and-when},
+  }
+
+@Manual{citeWaxman,
+  title={Donald Trump, Grover Cleveland, and the History of Trying to Win Back the White House},
+  author={Olivia Waxman}
+  organization={TIME},
+  year={2022},
+  url={https://time.com/6234562/nonconsecutive-terms-president-grover-cleveland-donald-trump/},
+  }
+  
+ChatGPT
+The error you're encountering seems to be caused by an unexpected character in the references.bib file. Specifically, it's complaining about an unexpected 'o' in line 202 of the file.
+
+The line in question is the organization field in the citeLonsdorf entry. It seems like there's a missing comma between the author and organization fields. Here's the corrected entry:
+
+bibtex
+Copy code
+@Manual{citeLonsdorf,
+  title={A timeline of the Jan. 6 Capitol attack — including when and how Trump responded},
+  author={Kat Lonsdorf, Courtney Dorning, Amy Isackson, Mary Louise Kelly, Alisa Chang},
+  organization={NPR News},
+  year={2024},
+  url={https://www.npr.org/2022/01/05/1069977469/a-timeline-of-how-the-jan-6-attack-unfolded-including-who-said-what-and-when},
+}
+Make sure to add the comma between author and organization in your references.bib file and try compiling your document again. If there are any other errors, the LaTeX compiler should provide more details about them.
+
 
