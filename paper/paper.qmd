@@ -29,6 +29,12 @@ library(arrow)
 library(kableExtra)
 library(modelsummary)
 library(MASS)
+library(broom.mixed)
+library(gutenbergr)
+library(haven)
+library(labelled)
+library(tidybayes)
+library(tidyverse)
 
 ## load data
 survey_analysis_data <- arrow::read_parquet("/Users/talia/US-Election-Forecast/data/analysis_data/survey_analysis_data.parquet")
@@ -40,18 +46,13 @@ head(survey_analysis_data)
 
 # Introduction
 
-The U.S. Presidential election will take place on Tuesday, November 5th, 2024, as America faces unprecedented levels of political polarization and diminished levels of trust in democratic institutions. As of March 11, 2024, former President Trump has 1078 out of the 1215 delegates needed to win the Republican nomination and President Biden has 1872 out of the 1968 delegates needed to win the Democratic nomination, therefore this election will feature the same candidates as the 2020 election. President Joe Biden will seek a second term and former President Donald Trump will try to become the second president to serve two non-consecutive terms. The only President to serve two non-consecutive terms was Grover Cleveland from 1885 to 1889 and 1893 to 1897 [@citeWaxman]. 
-The 2024 election will define the future of women’s rights, LGBTQ+ rights, the separation of church and state, immigration policy, and foreign policy in America. America is at a turning point: Trump and Biden have very different ideologies, policy ideas, and visions for the future of the nation. Former President Trump has celebrated that he was “able to kill Roe v. Wade” [@citeKapur]. With 2022 Supreme Court decision to overturn Roe v. Wade, there will be nothing to stop Trump from signing a bill to restrict access to, or even criminalize, abortion, contraception, or IVF across the United States. In February 2024, Trump stated that he “would encourage” the Putin regime to do “whatever the hell they want” to NATO allies who don’t meet their defense spending targets (citation). On the contrary, President Biden has stood for women’s rights, protecting same-sex marriage, pro-immigration policies, and with Ukraine in their fight for freedom following Russia’s invasion. 
-The January 6th, 2021, insurrection at the U.S. Capitol was a defining moment in the current era of political polarization in America. Trump refused to acknowledge his loss to Joe Biden in the 2020 U.S. presidential election. In August 2020, Trump claimed that the only way he was going to lose the election was “if the election is rigged.” [@citeAxelrod]. Since November 2020, he has falsely claimed that the election was fraudulent, and that Biden stole the election from him. On January 6, 2021, an angry pro-Trump mob stormed the U.S. Capitol in an attempt to "stop the steal," or in other words, to stop the joint session of congress from certifying Biden’s electoral college victory [@citeLonsdorf]. It is unclear whether former President Trump will concede if he is defeated again by President Biden in the 2024 election.
+The U.S. Presidential election will take place on Tuesday, November 5th, 2024, as America faces unprecedented levels of political polarization and diminished levels of trust in democratic institutions. As of March 11, 2024, former President Trump has 1078 out of the 1215 delegates needed to win the Republican nomination and President Biden has 1872 out of the 1968 delegates needed to win the Democratic nomination, therefore this election will feature the same candidates as the 2020 election. President Joe Biden will seek a second term and former President Donald Trump will try to become the second president to serve two non-consecutive terms. The only President to serve two non-consecutive terms was Grover Cleveland from 1885 to 1889 and 1893 to 1897 [@citeWaxman]. The 2024 election will define the future of women’s rights, LGBTQ+ rights, the separation of church and state, immigration policy, and foreign policy in America. America is at a turning point: Trump and Biden have very different ideologies, policy ideas, and visions for the future of the nation. Former President Trump has celebrated that he was “able to kill Roe v. Wade” [@citeKapur]. With 2022 Supreme Court decision to overturn Roe v. Wade, there will be nothing to stop Trump from signing a bill to restrict access to, or even criminalize, abortion, contraception, or IVF across the United States. In February 2024, Trump stated that he “would encourage” the Putin regime to do “whatever the hell they want” to NATO allies who don’t meet their defense spending targets (citation). On the contrary, President Biden has stood for women’s rights, protecting same-sex marriage, pro-immigration policies, and with Ukraine in their fight for freedom following Russia’s invasion. The January 6th, 2021, insurrection at the U.S. Capitol was a defining moment in the current era of political polarization in America. Trump refused to acknowledge his loss to Joe Biden in the 2020 U.S. presidential election. In August 2020, Trump claimed that the only way he was going to lose the election was “if the election is rigged.” [@citeAxelrod]. Since November 2020, he has falsely claimed that the election was fraudulent, and that Biden stole the election from him. On January 6, 2021, an angry pro-Trump mob stormed the U.S. Capitol in an attempt to "stop the steal," or in other words, to stop the joint session of congress from certifying Biden’s electoral college victory [@citeLonsdorf]. It is unclear whether former President Trump will concede if he is defeated again by President Biden in the 2024 election.
 
-Our survey data set was provided by the Polarization Research Lab. The Polarization Research Lab was formed by a group of researchers to increase understanding of where partisan animosity comes from and what can be done to help [@americaspoliticalpulse]. Our post-stratification data set was provided by the Integrated Public Use Microdata Series (IPUMS). IPUMS is an organization which lays out survey and census data with the help of 105 statistical agencies [@citeIPUMS]. We used the data from the 2022 American Community Survey (ACS) for this report [@citeIPUMS]. We use multi-level regression with post-stratification (MRP) to predict the results of the 2024 U.S. Presidential Election. MRP uses a smaller survey data set to fit a model to predict vote preference. We built a logistic regression model, using sex, age, race, hispanic, highest level of education, and whether the respondent lives in an urban or rural area as predictors to estimate support for President Biden. We fit this model using our survey data set, and apply it to our post-stratification data set to predict the popular vote and electoral college results of the 2024 election. 
+Our survey data set was provided by the Polarization Research Lab. The Polarization Research Lab was formed by a group of researchers to increase understanding of where partisan animosity comes from and what can be done to help [@americaspoliticalpulse]. Our post-stratification data set was provided by the Integrated Public Use Microdata Series (IPUMS). IPUMS is an organization which lays out survey and census data with the help of 105 statistical agencies [@citeIPUMS]. We used the data from the 2022 American Community Survey (ACS) for this report [@citeIPUMS]. We use multi-level regression with post-stratification (MRP) to predict the results of the 2024 U.S. Presidential Election. MRP uses a smaller survey data set to fit a model to predict vote preference. We built a logistic regression model, using sex, age, race, hispanic, highest level of education, and whether the respondent lives in an urban or rural area as predictors to estimate support for President Biden. We fit this model using our survey data set, and apply it to our post-stratification data set to predict the popular vote and electoral college results of the 2024 election.
 
 Our report has 4 sections. In @sec-data, we examine the data sets that we used for our report and present how variables in our survey data set interact as well as summary statistics. In @sec-model, we outline how we built a logistic regression model and used MRP to predict the results of the 2024 U.S. presidential election. In @sec-results, we present the findings of our model, which include a prediction for the popular vote and electoral college results. In @sec-discussion, we discuss what we can learn from our results, how the weaknesses of our survey data set translate into model weaknesses and limitations, and how this report can be extended and improved.
 
-
-We used R [@citeR], and the `tidyverse` [@citetidyverse], `janitor` [@citejanitor], `ggplot` [@citeggplot]
-packages to clean our survey and post-stratification data sets, fit our model, apply our model, and create our data visualizations.
-
+We used R [@citeR], and the `tidyverse` [@citetidyverse], `janitor` [@citejanitor], `ggplot` [@citeggplot] packages to clean our survey and post-stratification data sets, fit our model, apply our model, and create our data visualizations.
 
 # Data {#sec-data}
 
@@ -163,7 +164,7 @@ survey_analysis_data |>
 
 ```
 
-Overall, Biden outperformed Trump in urban areas, with the support of 60.22% of survey respondents living in urban areas. This is unsurprising, and it is a continuation of the pattern observed in recent presidential elections. @citeScala found that both former President Barack Obama and 2016 Democratic nominee Hillary Clinton performed well in densely populated urban areas, but faced increasingly challenging political climates and diminished voter support in rural areas. Hillary Clinton saw a particularly pronounced decline in support in rural areas in the 2016 election, where she was defeated by Donald Trump (Scala, 2016). Our survey data is somewhat consistent with this, as Biden trails Trump among survey respondents living in rural areas, with 46.20% support. 
+Overall, Biden outperformed Trump in urban areas, with the support of 60.22% of survey respondents living in urban areas. This is unsurprising, and it is a continuation of the pattern observed in recent presidential elections. @citeScala found that both former President Barack Obama and 2016 Democratic nominee Hillary Clinton performed well in densely populated urban areas, but faced increasingly challenging political climates and diminished voter support in rural areas. Hillary Clinton saw a particularly pronounced decline in support in rural areas in the 2016 election, where she was defeated by Donald Trump (Scala, 2016). Our survey data is somewhat consistent with this, as Biden trails Trump among survey respondents living in rural areas, with 46.20% support.
 
 ```{r}
 #| echo: false
@@ -508,11 +509,12 @@ None of the voters in our survey data are from Vermont, but 0.198% of the voters
 
 @fig-stateprops shows that there is a comparable distribution of voters across U.S. states in the survey and post-stratification data. However, the survey data over represents Florida, Michigan, New York, and Virginia.
 
-
 # Model {#sec-model}
+
 We will use multilevel regression with post-stratification (MRP) for our analysis.
 
 ## Model set-up
+
 To predict whether a person will vote for Joe Biden or Donald Trump, we fitted a logistic regression model using data from the America's Political Pulse Survey [@americaspoliticalpulse] and post-stratified it using ACS census data [@citeIPUMS]. Logistic regression only works for binary classification, therefore we created a `vote_biden` variable during our data cleaning process, which is equal to 1 if a person's preferred candidate is Joe Biden, and 0 if it is Donald Trump.
 
 We are interested in estimating We fitted a logistic regression model used to predict support for Biden using sex, age, race, race_hispanic, highest level of education, state, and urban as predictors on the America's Political Pulse survey data. We then applied it to the ACS 2022 census data. Our model is as follows:
@@ -523,14 +525,23 @@ Pr(vote\_biden=1) = \text{logit}^{-1}(\beta_0 + \beta_1 \text{sex}_i + \beta_2  
 }
 $$
 
+We built a Bayesian logistic regression model using the `stan_glm()` function of the `rstanarm` package [@rstanarm]. The model that we use is:
 
-We run our model in R [@citeR] using the `stan_glm()` function of the `rstanarm` package [@rstanarm]. We use the default priors from `rstanarm`.
-
-We use the `predict()` function in R [@citeR] to apply our logistic regression model to the ACS Census data [@citeIPUMS].
+```{=tex}
+\begin{align} 
+\scriptsize
+vote\_biden_i|\pi_i &\sim \mbox{Bern}(\pi_i) \\
+\mbox{logit}(\pi_i) &= \beta_0 + \beta_1 \text{sex}_i + \beta_2  \text{age\_bracket}_i + \beta_3 \text{race}_i + \beta_4 \text{education\_level}_i + \beta_5 \text{state}_i + \beta_6  \text{urban}_i \\
+\alpha &\sim \mbox{Normal}(0, 2.5) \\
+\beta_1 &\sim \mbox{Normal}(0, 2.5) \\
+\beta_2 &\sim \mbox{Normal}(0, 2.5)
+\end{align}
+```
+We run our model in R [@citeR] using the `stan_glm()` function of the `rstanarm` package [@rstanarm]. We use the default priors from `rstanarm`. We then applied our logistic regression model to the ACS Census data [@citeIPUMS].
 
 Model weaknesses: logistic regression output is binary so it does not include the options of not voting or voting for a third-party candidate.
 
-Concerns about our model are discussed in more detail in this section:
+Concerns about our model are discussed in more detail in @sec-weaknesses-limitations.
 
 ## Model justification
 
@@ -555,52 +566,7 @@ presidential_vote_model <-
 
 # Results {#sec-results}
 
-```{r}
-#| eval: true
-#| echo: false
-#| warning: false
-#|abel: tbl-supporttbl
-#| tbl-cap: "Estimates for support for Biden in each state"
-
-library(arrow)
-library(broom.mixed)
-library(gutenbergr)
-library(haven)
-library(knitr)
-library(labelled)
-library(modelsummary)
-library(rstanarm)
-library(tidybayes)
-library(tidyverse)
-
-
-# get proportions by demographic, then find proportion of each cell relative to population
-props <- poststrat_analysis_data %>%
-  group_by(state, races, race_hispanic, age_bracket, sex, education_level, urban) %>%
-  summarise(n = n()) %>%
-  ungroup() %>%
-  group_by(state) %>%
-  mutate(prop = n / sum(n))
-
-biden_support_by_state <-
-  presidential_vote_model |>
-  add_epred_draws(newdata = props) |>
-  rename(support_biden_predict = .epred) |>
-  mutate(support_biden_predict_prop = support_biden_predict * prop) |>
-  ungroup() |>
-  summarise(support_biden_predict = sum(support_biden_predict_prop),
-            .by = c(state, .draw)) |>
-  summarise(
-    mean = mean(support_biden_predict),
-    lower = quantile(support_biden_predict, 0.025),
-    upper = quantile(support_biden_predict, 0.975),
-    .by = state
-  )
-
-kable(biden_support_by_state)
-```
-
-popular vote
+## Popular Vote Prediction
 
 ```{r}
 #| echo: false
@@ -621,6 +587,21 @@ props <- poststrat_analysis_data %>%
 num_per_state <- poststrat_analysis_data %>%
   group_by(state) %>%
   summarise(total_respondents = n())
+
+biden_support_by_state <-
+  presidential_vote_model |>
+  add_epred_draws(newdata = props) |>
+  rename(support_biden_predict = .epred) |>
+  mutate(support_biden_predict_prop = support_biden_predict * prop) |>
+  ungroup() |>
+  summarise(support_biden_predict = sum(support_biden_predict_prop),
+            .by = c(state, .draw)) |>
+  summarise(
+    mean = mean(support_biden_predict),
+    lower = quantile(support_biden_predict, 0.025),
+    upper = quantile(support_biden_predict, 0.975),
+    .by = state
+  )
 
 merged_states <- merge(num_per_state, biden_support_by_state, by="state")
 
@@ -809,7 +790,7 @@ If my paper were 10 pages, then should be be at least 2.5 pages. The discussion 
 
 ## Weaknesses and Limitations {#sec-weaknesses-limitations}
 
-Weaknesses and next steps should also be included.
+Logistic regression is limited to the binary classification case, therefore using it l
 
 \newpage
 
@@ -817,11 +798,48 @@ Weaknesses and next steps should also be included.
 
 # Appendix {.unnumbered}
 
-## Additional data details
+## Additional Data Details
 
 ## Data Cleaning
 
+## Additional Tables
+
+```{r}
+#| eval: true
+#| echo: false
+#| warning: false
+#|abel: tbl-supporttbl
+#| tbl-cap: "Estimates for support for Biden in each state"
+
+# get proportions by demographic, then find proportion of each cell relative to population
+props <- poststrat_analysis_data %>%
+  group_by(state, races, race_hispanic, age_bracket, sex, education_level, urban) %>%
+  summarise(n = n()) %>%
+  ungroup() %>%
+  group_by(state) %>%
+  mutate(prop = n / sum(n))
+
+# biden_support_by_state <-
+#   presidential_vote_model |>
+#   add_epred_draws(newdata = props) |>
+#   rename(support_biden_predict = .epred) |>
+#   mutate(support_biden_predict_prop = support_biden_predict * prop) |>
+#   ungroup() |>
+#   summarise(support_biden_predict = sum(support_biden_predict_prop),
+#             .by = c(state, .draw)) |>
+#   summarise(
+#     mean = mean(support_biden_predict),
+#     lower = quantile(support_biden_predict, 0.025),
+#     upper = quantile(support_biden_predict, 0.975),
+#     .by = state
+#   )
+
+kable(biden_support_by_state)
+```
+
 ## Model Details
+
+### Model Summary
 
 ```{r}
 #| echo: false
@@ -831,6 +849,8 @@ Weaknesses and next steps should also be included.
 modelsummary::modelsummary(presidential_vote_model)
 # looking at coefficient estimates using modelsummary()
 ```
+
+### Coefficients
 
 ```{r}
 #| eval: true
@@ -848,7 +868,7 @@ modelsummary::modelsummary(presidential_vote_model)
 #   theme(axis.text.y = element_text(size = 5))
 ```
 
-## Correlation Map
+### Posterior Predictive Check
 
 In @fig-ppcheckandposteriorvsprior-1 we implement a posterior predictive check. This shows...
 
@@ -889,7 +909,7 @@ Model plot (still need to fix this)
 
 ```
 
-## Diagnostics
+### Trace Plot and Rhat Plot
 
 @fig-stanareyouokay-1 is a trace plot. It shows that the lines have a wide overlap with each other. This suggests that there is no poor convergence and the distribution behaves as expected.
 
@@ -913,6 +933,10 @@ cat("\n")
 
 plot(presidential_vote_model, "rhat")
 ```
+
+### Credibility Intervals
+
+In @fig-modelplot, we show the 90% credibility intervals for the predictors of `vote_biden`.
 
 ```{r}
 #| echo: false
