@@ -26,4 +26,4 @@ The repo is structured as:
 
 ## Statement on LLM usage
 
-Aspects of the code were written and debugged with the help of LLM ChatGPT 3.5. The interactions with ChatGPT are available in inputs/llms/usage.txt.
+Aspects of the code, including data visualizations and writing tests, were written and debugged with the help of LLM ChatGPT 3.5. The interactions with ChatGPT are available in inputs/llms/usage.txt. 
