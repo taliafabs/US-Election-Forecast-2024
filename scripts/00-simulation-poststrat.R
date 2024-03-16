@@ -1,16 +1,18 @@
 #### Preamble ####
 # Purpose: Simulate a post stratification data set containing information about
-# ...
-# presidential candidate is Joe Biden depends on ...write variables here!
+# age, gender, race, highest level of education, home state, and whether 
+# each individual lives in an urban or rural area
 # Author: Talia Fabregas, Fatimah Yunusa, Aamishi Sundeep
 # Date: 5 March 2024
 # Contact: talia.fabregas@mail.utoronto.ca
 # License: MIT
-# Pre-requisites: 
+# Pre-requisites: None
 
 #### Workspace Setup ####
 library(tidyverse)
 library(janitor)
+
+num_obs <- 100000
 
 us_states <- c(
   "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", 
@@ -24,31 +26,56 @@ us_states <- c(
   "Washington", "West Virginia", "Wisconsin", "Wyoming"
 )
 
-income_brackets <- c("Less than $10000",
-                     "$10000 - $19999",
-                     "$20000 - $29999",
-                     "$30000 - $39999",
-                     "$40000 - $49999",
-                     "$50000 - $59999",
-                     "$60000 - $69999",
-                     "$70000 - $79999",
-                     "$80000 - $99999",
-                     "$100000 - $119999",
-                     "$120000 - $149999",
-                     "$150000 - $199999",
-                     "$200000 - $249999",
-                     "$250000 - $349999",
-                     "$350000 - $499999",
-                     "$500000 or more",
-                     "Prefer not to say"
+
+races <- c("white","black", "asian", "middle eastern", "native american",
+           "hispanic", "pacific islander", "other", "chinese", "japanese", 
+           "asian", "south asian")
+
+genders_binary <- c("male", "female")
+
+highest_education_level <- c("No HS",
+                             "High school graduate",
+                             "Some college",
+                             "2-year",
+                             "4-year",
+                             "Post-grad")
+
+urban_or_rural <- c("urban", "rural")
+
+
+
+#### Simulate data ####
+simulated_poststrat_data <- tibble(
+  # age
+  age = sample(18:99, size=num_obs, replace=TRUE),
+  # gender
+  gender = sample(genders_binary, size = num_obs, replace = TRUE, 
+                  prob = c(0.5, 0.5)),
+  # race
+  race = sample(races, size = num_obs, replace = TRUE),
+  # highest level of education
+  education_level = sample(highest_education_level, size=num_obs, replace=TRUE),
+  # state
+  state = sample(us_states, size = num_obs, replace=TRUE),
+  # urban or rural (1 if urban, 0 otherwise)
+  urban = sample(urban_or_rural, size=num_obs, replace=TRUE)
 )
 
+simulated_poststrat_data$race <- as.factor(simulated_poststrat_data$race)
+simulated_poststrat_data$education_level <- as.factor(simulated_poststrat_data$education_level)
+
+#### Save data ####
+
+# save as a parquet under data/simulated_data
+write_parquet(simulated_poststrat_data, 
+              "data/simulated_data/simulated_poststrat_data.parquet")
 
 
 
-# poststrat_analysis_data <- reduced_poststrat_data2 |>
-#   select(birthyr, age, age_bracket, sex, races, race_white,
-#          race_asian, race_black, race_hispanic, race_native, educ, faminc_new,
-#          stateicp, urban)
+
+
+
+
+
 
 
