@@ -1,7 +1,7 @@
 #### Preamble ####
 # Purpose: Simulate a data set where the chance that a person's preferred 
 # presidential candidate is Joe Biden depends on age, gender, race, education,
-# income, state, and whether they live in an urban area.
+# state, and whether they live in an urban area.
 # Author: Talia Fabregas, Fatimah Yunusa, Aamishi Sandeep
 # Date: 5 March 2024
 # Contact: talia.fabregas@mail.utoronto.ca
@@ -36,7 +36,8 @@ us_states <- c(
 candidates <- c("Joe Biden", "Donald Trump")
 
 races <- c("white","black", "asian", "middle eastern", "native american",
-          "hispanic", "pacific islander", "other")
+          "hispanic", "pacific islander", "other", "chinese", "japanese", 
+          "asian", "south asian")
 
 genders_binary <- c("male", "female")
 
@@ -47,24 +48,8 @@ highest_education_level <- c("No HS",
                              "4-year",
                              "Post-grad")
 
-income_brackets <- c("Less than $10000",
-                     "$10000 - $19999",
-                     "$20000 - $29999",
-                     "$30000 - $39999",
-                     "$40000 - $49999",
-                     "$50000 - $59999",
-                     "$60000 - $69999",
-                     "$70000 - $79999",
-                     "$80000 - $99999",
-                     "$100000 - $119999",
-                     "$120000 - $149999",
-                     "$150000 - $199999",
-                     "$200000 - $249999",
-                     "$250000 - $349999",
-                     "$350000 - $499999",
-                     "$500000 or more",
-                     "Prefer not to say"
-                     )
+urban_or_rural <- c("urban", "rural")
+
 
 
 #### Simulate data ####
@@ -80,12 +65,10 @@ simulated_survey_data <- tibble(
   race = sample(races, size = num_obs, replace = TRUE),
   # highest level of education
   education_level = sample(highest_education_level, size=num_obs, replace=TRUE),
-  # income
-  income = sample(income_brackets, size=num_obs, replace=TRUE),
   # state
   state = sample(us_states, size = num_obs, replace=TRUE),
   # urban or rural (1 if urban, 0 otherwise)
-  urban = sample(1:0, size=num_obs, replace=TRUE)
+  urban = sample(urban_or_rural, size=num_obs, replace=TRUE)
 )
 
 simulated_survey_data$race <- as.factor(simulated_survey_data$race)
