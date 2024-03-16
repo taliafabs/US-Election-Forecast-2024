@@ -40,31 +40,18 @@ head(survey_analysis_data)
 
 # Introduction
 
-The 2024 U.S. Presidential Election will take place on Tuesday November 5 2024. Incumbent President Joe Biden will seek a second term in a rematch against his 2020 opponent and, arguably, the most polarizing figure in American politics, former President Donald Trump.
+The U.S. Presidential election will take place on Tuesday, November 5th, 2024, as America faces unprecedented levels of political polarization and diminished levels of trust in democratic institutions. As of March 11, 2024, former President Trump has 1078 out of the 1215 delegates needed to win the Republican nomination and President Biden has 1872 out of the 1968 delegates needed to win the Democratic nomination, therefore this election will feature the same candidates as the 2020 election. President Joe Biden will seek a second term and former President Donald Trump will try to become the second president to serve two non-consecutive terms. The only President to serve two non-consecutive terms was Grover Cleveland from 1885 to 1889 and 1893 to 1897 [@citeWaxman]. 
+The 2024 election will define the future of women’s rights, LGBTQ+ rights, the separation of church and state, immigration policy, and foreign policy in America. America is at a turning point: Trump and Biden have very different ideologies, policy ideas, and visions for the future of the nation. Former President Trump has celebrated that he was “able to kill Roe v. Wade” [@citeKapur]. With 2022 Supreme Court decision to overturn Roe v. Wade, there will be nothing to stop Trump from signing a bill to restrict access to, or even criminalize, abortion, contraception, or IVF across the United States. In February 2024, Trump stated that he “would encourage” the Putin regime to do “whatever the hell they want” to NATO allies who don’t meet their defense spending targets (citation). On the contrary, President Biden has stood for women’s rights, protecting same-sex marriage, pro-immigration policies, and with Ukraine in their fight for freedom following Russia’s invasion. 
+The January 6th, 2021, insurrection at the U.S. Capitol was a defining moment in the current era of political polarization in America. Trump refused to acknowledge his loss to Joe Biden in the 2020 U.S. presidential election. In August 2020, Trump claimed that the only way he was going to lose the election was “if the election is rigged.” [@citeAxelrod]. Since November 2020, he has falsely claimed that the election was fraudulent, and that Biden stole the election from him. On January 6, 2021, an angry pro-Trump mob stormed the U.S. Capitol in an attempt to "stop the steal," or in other words, to stop the joint session of congress from certifying Biden’s electoral college victory [@citeLonsdorf]. It is unclear whether former President Trump will concede if he is defeated again by President Biden in the 2024 election.
 
-Donald Trump refused to acknowledge his loss to Joe Biden in the 2020 U.S. presidential election. Since November 2020, he has falsely claimed that the election was fraudulent, and that Biden stole the election from him. On January 6, 2021, an angry pro-Trump mob stormed the U.S. Capitol in an attempt to "stop the steal," or in other words, to stop the certification of Biden's electoral college victory and overturn the results of the election. 
+Our survey data set was provided by the Polarization Research Lab. The Polarization Research Lab was formed by a group of researchers to increase understanding of where partisan animosity comes from and what can be done to help [@americaspoliticalpulse]. Our post-stratification data set was provided by the Integrated Public Use Microdata Series (IPUMS). IPUMS is an organization which lays out survey and census data with the help of 105 statistical agencies [@citeIPUMS]. We used the data from the 2022 American Community Survey (ACS) for this report [@citeIPUMS]. We use multi-level regression with post-stratification (MRP) to predict the results of the 2024 U.S. Presidential Election. MRP uses a smaller survey data set to fit a model to predict vote preference. We built a logistic regression model, using sex, age, race, hispanic, highest level of education, and whether the respondent lives in an urban or rural area as predictors to estimate support for President Biden. We fit this model using our survey data set, and apply it to our post-stratification data set to predict the popular vote and electoral college results of the 2024 election. 
 
-Packages used for data cleaning, model, visualizations, and tables: `tidyverse` @citetidyverse, `janitor` @citejanitor, `rstanarm`, `readr`, `ggplot2`, `knitr`, and `arrow`.
-
-The remainder of this paper is structured as follows. @sec-data discusses the survey and post-stratification data used.
+Our report has 4 sections. In @sec-data, we examine the data sets that we used for our report and present how variables in our survey data set interact as well as summary statistics. In @sec-model, we outline how we built a logistic regression model and used MRP to predict the results of the 2024 U.S. presidential election. In @sec-results, we present the findings of our model, which include a prediction for the popular vote and electoral college results. In @sec-discussion, we discuss what we can learn from our results, how the weaknesses of our survey data set translate into model weaknesses and limitations, and how this report can be extended and improved.
 
 
+We used R [@citeR], and the `tidyverse` [@citetidyverse], `janitor` [@citejanitor], `ggplot` [@citeggplot]
+packages to clean our survey and post-stratification data sets, fit our model, apply our model, and create our data visualizations.
 
-Clear gap that needs to be filled ... what is the research gap and why is this important? - 2024 US Presidential Election - how consequential this election is - what is on the ballot - women's rights - trump's project 2025 thing.
-
-If someone's done it before not on this data set not in this context.
-
-The survey data for our study was provided by the Polarization Research Lab. The Polarization Research Lab was formed by a group of researchers to increase understanding of where partisan animosity comes from and what can be done to help [@americaspoliticalpulse]. The post-stratification data for this study was provided by the Integrated Public Use Microdata Series (IPUMS). IPUMS is an organization which lays out survey and census data with the help of 105 statistical agencies [@citeIPUMS]. We used the data from the 2022 American Community Survey (ACS) for this report [@citeIPUMS].
-
-Our report has 5 sections. In @sec-data, we examine the data sets that we used for our report. In @sec-model, we we use multi-level regression with post-stratification (MRP) to predict the results of the 2024 U.S. presidential election. MRP uses two different data sets, our survey data and our post-stratification data. It fits a model using the smaller survey data set and applies it to the larger post-stratification data set. In @sec-results, we present the findings of our model. In @sec-discussion, we discuss what we learned.
-
-@citeR was used
-
-ESTIMAND: SUPPORT FOR BIDEN
-
-We will build a logistic regression model to estimate support for President Biden in the upcoming election, using sex, age, race, highest level of education, and whether the respondent lives in an urban or rural area as predictors.
-
-We will use logistic regression to estimate support for Biden. Multilevel regression with post-stratification (MRP)
 
 # Data {#sec-data}
 
@@ -326,7 +313,7 @@ Our raw post-stratification data set has 500,000 records. We selected variables 
 
 -   `metro`: whether the respondent lives in a metropolitan area or not.
 
-The sex, race, educ, and metro variables were cleaned and re-factored to mirror our survey data and to allow us to apply our model to our post-stratification data. @fig-demographics1 shows the demographic statistics of our survey and post-stratification data. The steps and code for producing @fig-demographics1 were obtained from @citeMatthew. We also created a `race_hispanic`, which is equal to either "hispanic" or "not hispanic" to ensure that our survey and post-stratification data sets would align, because this was a separate variable from race in our post-stratification data.
+The sex, race, educ, and metro variables were cleaned and re-factored to mirror our survey data and to allow us to apply our model to our post-stratification data. @fig-demographics1 shows the demographic statistics of our survey and post-stratification data sets. The steps and code for producing @fig-demographics1 were obtained from @citeMatthew. We also created a `race_hispanic`, which is equal to either "hispanic" or "not hispanic" to ensure that our survey and post-stratification data sets would align, because this was a separate variable from race in our post-stratification data.
 
 ```{r}
 #| echo: false
@@ -529,6 +516,12 @@ We will use multilevel regression with post-stratification (MRP) for our analysi
 To predict whether a person will vote for Joe Biden or Donald Trump, we fitted a logistic regression model using data from the America's Political Pulse Survey [@americaspoliticalpulse] and post-stratified it using ACS census data [@citeIPUMS]. Logistic regression only works for binary classification, therefore we created a `vote_biden` variable during our data cleaning process, which is equal to 1 if a person's preferred candidate is Joe Biden, and 0 if it is Donald Trump.
 
 We are interested in estimating We fitted a logistic regression model used to predict support for Biden using sex, age, race, race_hispanic, highest level of education, state, and urban as predictors on the America's Political Pulse survey data. We then applied it to the ACS 2022 census data. Our model is as follows:
+
+$$
+{\scriptsize
+Pr(vote\_biden=1) = \text{logit}^{-1}(\beta_0 + \beta_1 \text{sex}_i + \beta_2  \text{age\_bracket}_i + \beta_3 \text{race}_i + \beta_4 \text{education\_level}_i + \beta_5 \text{state}_i + \beta_6  \text{urban}_i )
+}
+$$
 
 
 We run our model in R [@citeR] using the `stan_glm()` function of the `rstanarm` package [@rstanarm]. We use the default priors from `rstanarm`.
