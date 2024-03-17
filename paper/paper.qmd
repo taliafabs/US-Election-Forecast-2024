@@ -1,5 +1,5 @@
 ---
-title: "Joe Biden Predicted to Win 55.9% of the Popular Vote in the 2024 U.S. Presidential Election"
+title: "Joe Biden Predicted to Win 56.59% of the Popular Vote in the 2024 U.S. Presidential Election"
 author: 
   - Talia Fabregas
   - Fatimah Yunusa
@@ -498,7 +498,7 @@ presidential_vote_model <-
 
 ## Popular Vote Prediction
 
-We got our popular vote prediction by taking the weighted average of vote_biden across all U.S. states and converting it into a percent. The average is weighted according to the number of census respondents in our post-stratification data set from each state. @tbl-popvotepost-popularvote summarizes our mean, lower, and upper estimates for the popular vote percentage and number of electoral college votes that Joe Biden will receive on November 5th. Based on the results of our multi-level regression with post-stratification (MRP), which involved applying the logistic regression outlined in @sec-model to our post-stratification data set, we predict that Joe Biden and Donald Trump will receive 56.59% and 43.41%, respectively, of the popular vote. That means that our logistic regression model classified 56.59% of the people included in our subset of the ACS 2022 [@citeIPUMS] as Biden voters based on sex, age bracket, race, highest level of education, and whether they live in an urban or rural area. @tbl-popvotepost-popularvote shows our lower, mean, and upper estimate for the percent of the popular vote that Joe Biden will receive. Conversely, the lower estimate for Joe Biden corresponds to the upper estimate for Donald Trump, and the upper estimate for Joe Biden
+We got our popular vote prediction by taking the weighted average of vote_biden across all U.S. states and converting it into a percent. The average is weighted according to the number of census respondents in our post-stratification data set from each state. @tbl-popvotepost-popularvote summarizes our mean, lower, and upper estimates for the popular vote percentage and number of electoral college votes that Joe Biden will receive on November 5th. Based on the results of our multi-level regression with post-stratification (MRP), which involved applying the logistic regression outlined in @sec-model to our post-stratification data set, we predict that Joe Biden and Donald Trump will receive 56.59% and 43.41%, respectively, of the popular vote. That means that our logistic regression model classified 56.59% of the people included in our subset of the ACS 2022 [@citeIPUMS] as Biden voters based on sex, age bracket, race, highest level of education, and whether they live in an urban or rural area. @tbl-popvotepost-popularvote shows our lower, mean, and upper estimate for the percent of the popular vote that Joe Biden will receive. Conversely, the lower estimate for Joe Biden corresponds to the upper estimate for Donald Trump, and the upper estimate for Joe Biden corresponds to the lower estimate for Donald Trump.
 
 ```{r}
 #| echo: false
@@ -609,7 +609,9 @@ kable(biden_ec_poststrat, align = "c") %>%
   kable_styling(bootstrap_options = "striped", full_width = F)
 ```
 
-The estimates for the support for Biden in each state are shown in @fig-estimatedpropsupport. We followed and modified the code provided in Chapter 16 of "Telling Stories with Data" [@tswd] to produce @fig-estimatedpropsupport. We can see that the proportion of voters classified as Biden voters
+## Electoral College Prediction
+
+The estimates for the support for Biden in each state are shown in @fig-estimatedpropsupport. We followed and modified the code provided in Chapter 16 of "Telling Stories with Data" [@tswd] to produce @fig-estimatedpropsupport. The red or blue line for the predicted proportion of Biden votes in each state represents the 97.5% prediction interval. The mean estimate for the percentage of voters in each state supporting Biden is denoted by the blue or red dot at the center of each line. The line is blue if the mean prediction is over 50%, indicating that the state's electoral college votes would go to Joe Biden, and red if it is below 50%, indicating that the state's elecotral college votes would go to Donald Trump. This interval crosses the 50% line for numerous states, which means that based on our model, they could be toss-ups. We can see that the prediction interval is widest for Hawaii, which ranges from 44.5% to 66.9% with the mean prediction of 56.1%, and Alaska, which ranges from 41.4% to 63.6%, with a mean prediction of 53.2%
 
 ```{r}
 #| echo: false
@@ -640,8 +642,6 @@ biden_support_by_state |>
 ```
 
 @fig-estimatedpropsupport2 illustrates the same information as @fig-estimatedpropsupport, except it includes gray dots that represent the proportion of voters in each state that support Biden from the survey data. We followed and modified the code provided in Chapter 16 of "Telling Stories with Data" [@tswd] to produce @fig-estimatedpropsupport2.
-
-## Electoral College Prediction
 
 ```{r}
 #| echo: false
@@ -677,9 +677,9 @@ biden_support_by_state |>
   theme(axis.text.y = element_text(size = 5)) 
 ```
 
-There is a lot of variation between the post-stratification and survey estimates for the proportion of voters in each state that will vote for President Biden in the upcoming election.
+We can see that there is a lot of variation between the post-stratification and survey estimates for the proportion of voters in each state that will vote for President Biden in the upcoming election. However, when we consider only the post-stratification estimates and add up the electoral college votes for the states in which the mean estimated support for Biden is over 50% (shown in blue on @fig-estimatedpropsupport and @fig-estimatedpropsupport2), we can predict that Joe Biden will defeat Donald Trump in the electoral college 471 to 67. @tbl-popvotepost-popularvote shows the electoral college predictions based on the lower end and higher end of these intervals. At the lower end, we can predict that Joe Biden will defeat Donald Trump in the electoral college 363 to 175, and at the upper end, we can predict that Joe Biden will defeat Donald Trump in the electoral college 538 to 0.
 
-@fig-electoralmappoststrat illustrates the same information as @fig-estimatedpropsupport, but on an electoral map. We used the steps and code provided by @citeMatthew and the statebins package [@statebins] to produce @fig-electoralmappoststrat .
+@fig-electoralmappoststrat illustrates the same information as @fig-estimatedpropsupport, but on an electoral map. We used the steps and code provided by @citeMatthew and the `statebins` package [@statebins] to produce @fig-electoralmappoststrat. This map shows the mean prediction for the proportion of voters in each state prefer Joe Biden over Donald Trump. We see that California (CA), Maryland (MD), and New Jersey (NJ) are dark blue, indicating strong support for Joe Biden in those states. Wyoming (WY), South Dakota (SD), North Dakota (ND), and Montana (MT) are red, which indicates support for Donald Trump. In addition to this, Texas and Florida are blue in @fig-electoralmappoststrat.The Democrats have not won Florida since former President Barack Obama won when he was re-elected in 2012. Donald Trump carried Florida in both 2016 and 2020, so flipping it in 2024 would be huge for President Biden. The Republican presidential nominee has carried the state of Texas in every presidential election since 1976 [@citeCNN], so flipping it in 2024 would give Biden an excellent chance of winning re-election.
 
 ```{r}
 #| echo: false
@@ -689,8 +689,6 @@ There is a lot of variation between the post-stratification and survey estimates
 #| label: fig-electoralmappoststrat
 #| fig-cap: "Electoral map based on post-stratification data"
 
-library(ggplot2)
-library(statebins)
 poststrat_electoral_map <- biden_support_by_state %>%
   mutate(prop = mean) 
 
@@ -710,13 +708,11 @@ poststrat_electoral_map %>%
   labs(fill = "Proportion Voting \nfor Biden")
 ```
 
-type results
-
-want the visualizations before discussion
-
 # Discussion {#sec-discussion}
 
 ## Popular Vote Projection {#sec-first-point}
+
+After performing MRP, we predicted that Joe Biden will wi
 
 If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this.
 
