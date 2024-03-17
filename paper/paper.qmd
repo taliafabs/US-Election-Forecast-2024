@@ -498,6 +498,8 @@ presidential_vote_model <-
 
 ## Popular Vote Prediction
 
+We got our popular vote prediction by taking the weighted average of vote_biden across all U.S. states and converting it into a percent. The average is weighted according to the number of census respondents in our post-stratification data set from each state. @tbl-popvotepost-popularvote summarizes our mean, lower, and upper estimates for the popular vote percentage and number of electoral college votes that Joe Biden will receive on November 5th. Based on the results of our multi-level regression with post-stratification (MRP), which involved applying the logistic regression outlined in @sec-model to our post-stratification data set, we predict that Joe Biden and Donald Trump will receive 56.59% and 43.41%, respectively, of the popular vote. That means that our logistic regression model classified 56.59% of the people included in our subset of the ACS 2022 [@citeIPUMS] as Biden voters based on sex, age bracket, race, highest level of education, and whether they live in an urban or rural area. @tbl-popvotepost-popularvote shows our lower, mean, and upper estimate for the percent of the popular vote that Joe Biden will receive. Conversely, the lower estimate for Joe Biden corresponds to the upper estimate for Donald Trump, and the upper estimate for Joe Biden
+
 ```{r}
 #| echo: false
 #| warning: false
@@ -607,9 +609,7 @@ kable(biden_ec_poststrat, align = "c") %>%
   kable_styling(bootstrap_options = "striped", full_width = F)
 ```
 
-@tbl-popvotepost-popularvote summarizes the popular vote and electoral college predictions
-
-The estimates for the support for Biden in each state are shown in @tbl-estimatedpropsupport. We followed and modified the code provided in Chapter 16 of "Telling Stories with Data" [@tswd] to produce @fig-estimatedpropsupport
+The estimates for the support for Biden in each state are shown in @fig-estimatedpropsupport. We followed and modified the code provided in Chapter 16 of "Telling Stories with Data" [@tswd] to produce @fig-estimatedpropsupport. We can see that the proportion of voters classified as Biden voters
 
 ```{r}
 #| echo: false
@@ -640,6 +640,8 @@ biden_support_by_state |>
 ```
 
 @fig-estimatedpropsupport2 illustrates the same information as @fig-estimatedpropsupport, except it includes gray dots that represent the proportion of voters in each state that support Biden from the survey data. We followed and modified the code provided in Chapter 16 of "Telling Stories with Data" [@tswd] to produce @fig-estimatedpropsupport2.
+
+## Electoral College Prediction
 
 ```{r}
 #| echo: false
@@ -724,7 +726,7 @@ If my paper were 10 pages, then should be be at least 2.5 pages. The discussion 
 
 ## Survey Error Hindering Model Accuracy {#sec-third-point}
 
-## Weaknesses and Limitations {#sec-weaknesses-limitations}
+## Weaknesses, Limitations, and Possible Next Steps {#sec-weaknesses-limitations}
 
 The weaknesses of our model stem directly from the limited nature of the survey data set that we used, the America’s Political Pulse Survey Week 3 2024. As seen in @sec-survey, the electoral college predictions from Kansas (4 respondents), Wyoming (1 respondent), and Hawaii (7 respondents) are drastically different from the results seen in recent elections. There are very few respondents from smaller states with fewer electoral college votes, such as Kansas, Wyoming, Hawaii, New Hampshire, and Rhode Island in our survey data set. In addition to this, there are no respondents from Vermont in our survey data set. As mentioned, there were no respondents from Vermont and very few respondents from several states with few electoral college votes in our survey data set. As a result, we were not able to include state as a predictor in our model. Including state as a predictor would not have been applicable to respondents in our post-stratification census data from the state of Vermont at all.
 
@@ -734,7 +736,7 @@ Logistic regression can only be used for binary classification. This limits the 
 
 An alternative option would be to fit a SoftMax regression model, which is a generalization of logistic regression that can predict the class probabilities for more than two classics and perform multi-class classification. However, a SoftMax regression model is more powerful than a logistic regression model. It would have overfit our survey data set because it only contains a total of 1000 observations, including less than five from some smaller states. While a SoftMax regression model might make sense for predicting vote preference when there are more than two candidates, this model would have been far too powerful for our survey data set and not worth the trade-offs. The bulk effective sample size and tail effective sample size would have been too low, which would mean that our posterior means, posterior medians, posterior variances, and tail quantiles would be unreliable [@citeStan]. We can justify using a logistic regression model because the United States has a two-party system, meaning that Joe Biden (Democrat) and Donald Trump (Republican) are the only candidates who can realistically win the presidency on November 5^th^. Although there will be third-party candidates, we do not yet know who they will be, nor are they expected to win any electoral college votes.
 
-## Next Steps
+With a survey data set that is as limited as the one we currently have, SoftMax regression is not a viable option. However, the possibility of third-party candidates receiving vote shares larger than the margin of victory of the Democratic or Republican nominee in key battleground states highlights the need to consider the fact that a small percentage of voters will cast a ballot for someone not named Donald Trump or Joe Biden on November 5th. The first step towards extending and improving this report in the future would be to find a survey data set that has significantly more respondents, is somewhat reflective of voting trends and demographics in each state, and specifically asks respondents who they plan to vote for in the 2024 U.S. presidential election. Once we address the issue of having very few, or even no respondents from smaller states and no question about 2024 vote intention, we will be able to build a stronger and more accurate model to predict vote choice based on state, urban or rural area, demographics such as sex, age, and race, and education. A robust survey data set with enough respondents (possibly upwards of 10,000) will allow us to train a more powerful SoftMax regression model to perform multi-class classification and classify voters as Trump, Biden, third-party, or abstaining voters using similar predictors to the ones outlined in @sec-model as well as state.
 
 \newpage
 
@@ -787,9 +789,7 @@ kable(races2)
 
 ### Posterior Predictive Check
 
-In @fig-ppcheckandposteriorvsprior-1 we implement a posterior predictive check. This shows...
-
-In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior. This shows...
+In @fig-ppcheckandposteriorvsprior-1 we implement a posterior predictive check. In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior.
 
 ```{r}
 #| eval: true
@@ -818,7 +818,7 @@ We check for signs that the Markov chain Monte Carlo (MCMC) algorithm ran into i
 
 @fig-stanareyouokay-1 is an Rhat plot. It shows everything is close than 1 and less than 1.05. This means that the coefficients all converge to the same distribution, and the model is able to predict vote_biden in the survey data.
 
-@fig-stanareyouokay-2 shows the trace plot for our variables. We can see that the lines bounce, but remain horizontal and have a lot of overlap with each other [@tswd]. This suggests that the distribution behaves as expected, and we do not need to re-run our model with fewer predictors or different priors.
+@fig-stanareyouokay-2 shows the trace plot for our intercept. We can see that the lines bounce, but remain horizontal and have a lot of overlap with each other [@tswd]. @fig-tracesex, @fig-traceage, @fig-tracerace, @fig-traceeducation, and @fig-traceurban show the trace plots for our sex, age_bracket, races, education_level, and urban variables. Each of these trace plots looks similar to @fig-stanareyouokay-2, as the lines bounce, remain horizontal, and overlap a lot. Our trace plots suggest that the distribution behaves as expected, and we do not need to re-run our model with fewer predictors or different priors [@tswd].
 
 ```{r}
 #| echo: false
@@ -834,7 +834,7 @@ plot(presidential_vote_model, "rhat") + theme_classic()
 
 cat("\n")
 
-plot(presidential_vote_model, "trace") 
+plot(presidential_vote_model, "trace","(Intercept)") 
 
 
 ```
@@ -920,7 +920,7 @@ plot(presidential_vote_model, "trace", "urbanurban")
 
 ### Credibility Intervals
 
-In @fig-modelplot, we show the 90% credibility intervals for the predictors of `vote_biden`.
+In @fig-modelplot, we show the 90% credibility intervals for the predictors of `vote_biden`. We see that the 90% credibility interval for when urban=urban is greater than 0. This means that a respondent who lives in an urban area is more likely to support Joe Biden. We also see that the 90% credibility interval for sex=male is below zero. This means that based on our survey data and model, male respondents are more likely to support Donald Trump.
 
 ```{r}
 #| echo: false
