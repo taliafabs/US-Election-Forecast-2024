@@ -51,7 +51,7 @@ Our survey data set was provided by the Polarization Research Lab. The Polarizat
 
 Our report has 4 sections. In @sec-data, we examine the data sets that we used for our report and present how variables in our survey data set interact as well as summary statistics. In @sec-model, we outline how we built a logistic regression model and used MRP to predict the results of the 2024 U.S. presidential election. In @sec-results, we present the findings of our model, which include a prediction for the popular vote and electoral college results. In @sec-discussion, we discuss what we can learn from our results, how the weaknesses of our survey data set translate into model weaknesses and limitations, and how this report can be extended and improved.
 
-We used R [@citeR], and the `tidyverse` [@citetidyverse], `janitor` [@citejanitor], `ggplot` [@citeggplot] packages to clean our survey and post-stratification data sets, fit our model, apply our model, and create our data visualizations.
+We used R [@citeR], and the `tidyverse` [@citetidyverse], `janitor` [@citejanitor], `ggplot` [@citeggplot], `rstanarm` [@citerstanarm], and `arrow` [@citearrow] packages throughout our analtsis to clean our survey and post-stratification data sets, fit our model, apply our model, and create our data visualizations.
 
 # Data {#sec-data}
 
@@ -703,8 +703,6 @@ poststrat_electoral_map %>%
 ```
 
 # Discussion {#sec-discussion}
-
-## How we produced our popular vote and electoral college predictions {#sec-first-point}
 
 ## The popular vote does not necessarily define the electoral college
 
