@@ -19,7 +19,7 @@ The repo is structured as:
 -   `data` contains the simulated data.
 -   `models` contains the logistic regression model that we used to predict vote preference. 
 -   `other` contains details about LLM (ChatGPT 3.5) interactions, and sketches of a potential dataset and graphs.
--   `output` contains the files used to generate the paper, including the Quarto document and reference bibliography file, as well as the PDF of the paper. 
+-   `paper` contains the files used to generate the paper, including the Quarto document and reference bibliography file, as well as the PDF of the paper. 
 -   `scripts` contains the R scripts used to simulate, download, clean, and test data.
 
 
