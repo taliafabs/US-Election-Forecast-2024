@@ -1,5 +1,6 @@
 ---
-title: "Joe Biden Predicted to Win 56.59% of the Popular Vote in the 2024 U.S. Presidential Election"
+title: "Forecasting the 2024 U.S. Presidential Election"
+subtitle: "Biden Expected to Win Popular Vote Based on MRP Analysis"
 author: 
   - Talia Fabregas
   - Fatimah Yunusa
